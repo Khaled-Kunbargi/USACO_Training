@@ -1,1 +1,41 @@
+#include <bits/stdc++.h>
+using namespace std;
 
+int main(){
+    freopen("cownomics.out", "w", stdout);
+    freopen("cownomics.in", "r", stdin);
+
+    int n, m; cin >> n >> m;
+    vector <string> a(2*n);
+    for(int i=0; i<2*n; i++){ 
+        a[i].resize(m);
+        cin >> a[i];
+    }
+
+    int ans=0;
+    for(int i=0; i<m; i++){
+        for(int j=i+1; j<m; j++){
+            for(int k=j+1; k<m; k++){
+                set <string> s;
+                for(int r=0; r<n; r++){
+                    string cur;
+                    cur += a[r][i]; cur += a[r][j]; cur += a[r][k];
+                    s.insert(cur);
+                }
+                int ok=1;
+                for(int r=n; r<2*n; r++){
+                    string cur;
+                    cur += a[r][i]; cur += a[r][j]; cur += a[r][k];
+                    if(s.find(cur) != s.end()){
+                        ok =0;
+                        break;
+                    }
+                }
+                if(ok) ans++;
+            }
+        }
+    }
+    cout << ans << "\n";
+    return 0;
+}
+ 
