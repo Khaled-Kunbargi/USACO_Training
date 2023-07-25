@@ -1,0 +1,42 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+//The range of values that the final sleeping hours daily will be from 0 to sum.
+//The number of the days at which Bessise will sleep x days will be sum/x.
+//We check for every possible value of x. if we can make all hours equal to x.
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    int t; cin >> t;
+    while(t--){
+        int n; cin >> n;
+        vector <int> a(n);
+        int s = 0;
+        for(int i=0; i<n; i++){ 
+            cin >> a[i];
+            s += a[i];
+        }
+        for(int x=0; x<=s; x++){
+            if(x != 0 && s % x != 0){
+                continue;
+            }
+            int cur_sum =0;
+            bool valid=1;
+            for(auto i: a){
+                cur_sum += i;
+                if(cur_sum > x){
+                    valid = 0;
+                    break;  
+                }else if(cur_sum == x){
+                    cur_sum = 0;
+                }
+            }
+            if(valid){
+                if(x == 0) cout << 0 << "\n";
+                else cout << n - s/x << "\n";
+                break;
+            }
+        }
+    }
+    return 0;
+}
