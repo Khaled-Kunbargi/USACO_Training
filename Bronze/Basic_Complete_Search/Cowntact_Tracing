@@ -1,0 +1,62 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct item {
+    int t, x, y;
+};
+
+bool cmp(item a, item b){
+    return a.t < b.t;
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("tracing.out", "w", stdout);
+    freopen("tracing.in", "r", stdin);
+
+    int n, t; cin >> n >> t;
+    string s; cin >> s;
+    vector <item> a(t);
+
+    for(int i=0; i<t; i++){
+        cin >> a[i].t >> a[i].x >> a[i].y;
+        a[i].x--, a[i].y--;
+    }
+
+    sort(a.begin(), a.end(), cmp);
+
+    map <int,bool>  possible_K, possible_patient;
+    for(int i=0; i<n; i++){
+        if(s[i] == '0') continue;
+        string icur, cur;
+        for(int j=0;j<n; j++){
+            if(j == i) icur += '1';
+            else icur += '0';
+        }
+        cur = icur;
+        for(int k=0; k<=t+1; k++){
+            vector <int> handshakes(n, 0);
+            for(int j=0; j<t; j++){
+                int x = a[j].x, y = a[j].y;
+                if(cur[x] == '1') handshakes[x]++;
+                if(cur[y] == '1') handshakes[y]++;
+                if(handshakes[x] <= k && cur[x] == '1') cur[y] = '1';
+                if(handshakes[y] <= k && cur[y] == '1') cur[x] = '1';
+            }
+            if(cur == s){
+                possible_patient[i] = 1;
+                possible_K[k] = 1;
+            }
+            cur = icur;
+        }
+    }
+    int patient_zeros = 0, mink = 251, maxk = 0;
+    for(int i=0; i<n; i++) if(possible_patient[i]) patient_zeros++;
+    for(int i=0; i<=t+1; i++) if(possible_K[i]) maxk = i;
+    for(int i=t+1; i>=0; i--) if(possible_K[i]) mink = i;
+    if(maxk != t+1)
+        cout << patient_zeros << " " << mink << " " << maxk << "\n";
+    else
+        cout << patient_zeros << ' ' << mink << " Infinity\n";
+    return 0;
+}
