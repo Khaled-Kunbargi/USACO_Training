@@ -1,0 +1,62 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int n, m;
+bool check(vector <int> pos, vector <int> order){
+    vector <int> cow_pos(n+1, 0);
+    for(int i=1; i<=n; i++){
+        if(pos[i] != 0){
+            cow_pos[pos[i]] = i;
+        }
+    }
+
+    for(int i=1, j=0; i<=n && j < m; i++){
+        if(cow_pos[order[j]] != 0){
+            if(i > cow_pos[order[j]]) return false;
+            
+            i = cow_pos[order[j]];
+            j++;
+        }else{
+            while(i <= n && pos[i] != 0) i++;
+
+            if(i > n) return false;
+
+            pos[i] = order[j];
+            cow_pos[order[j]] = i;
+            j++;
+        }
+    }
+    return true;
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("milkorder.out", "w", stdout);
+    freopen("milkorder.in", "r", stdin);
+
+    int k; cin >> n >> m >> k;
+    vector <int> a(m);
+    for(int i=0; i<m; i++){
+        cin >> a[i];
+    }
+    vector <int> pos(n+1, 0);
+    for(int i=0;i<k; i++){
+        int c, p; cin >> c >> p;
+        pos[p] = c;
+        if(c == 1){
+            cout << p << "\n";
+            return 0;
+        }
+    }
+
+    for(int i=1; i<=n; i++){
+        if(pos[i] != 0) continue;
+        pos[i] = 1;
+        if(check(pos, a)){
+            cout << i << "\n";
+            break;
+        }
+        pos[i] = 0;
+    }
+    return 0;
+}
