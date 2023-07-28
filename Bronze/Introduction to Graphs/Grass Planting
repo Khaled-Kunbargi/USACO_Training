@@ -1,0 +1,27 @@
+#include <bits/stdc++.h>
+using namespace std;
+ 
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("planting.out", "w", stdout);
+    freopen("planting.in", "r", stdin);
+    int n; cin >> n;
+    map <int,vector <int>> adj;
+    for(int i=0; i<n-1; i++){
+        int x, y; cin >> x >> y;
+        adj[x].push_back(y);
+        adj[y].push_back(x);
+    }
+    int mx = -1;
+    for(int i=1; i <= n; i++){
+        int s = adj[i].size();
+        int mx2 = 0;
+        for(auto j: adj[i]){
+            mx2 = max(mx2, (int) adj[j].size() - 1);
+        }
+        int x = max((mx2-(s-1)),0);
+        mx = max(mx, s+x);
+    }
+    cout << mx+1 << "\n";
+    return 0;
+}
