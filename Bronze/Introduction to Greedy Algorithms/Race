@@ -1,0 +1,45 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+ll S(ll x){
+    return x*(x+1)/2;
+}
+
+ll sum(ll a, ll b){
+    return S(b) - S(a-1) ;
+}
+
+bool ok(ll s, ll x, ll l){
+    if(s <= x) return true;
+    return sum(x, s) <= l;
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("race.out", "w", stdout);
+    freopen("race.in", "r", stdin);
+
+    ll k, n; cin >> k >> n;
+    ll tk = k;
+    while(n--){
+        k = tk;
+        ll x; 
+        cin >> x;
+        ll c=0, speed = 0;
+        while(k > 0){
+            ll a = speed+1, b = speed;
+            if(ok(a, x, k)){
+                speed++;
+            }else if(ok(b, x, k)){
+
+            }else {
+                speed--;
+            }
+            k -= speed;
+            c++;
+        }
+        cout << c << "\n";
+    }
+    return 0;
+}
