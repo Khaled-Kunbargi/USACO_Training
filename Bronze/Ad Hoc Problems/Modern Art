@@ -1,0 +1,46 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+//for a rectangle in a specific color
+//we see the colors that are on top of the rectangle.
+//These colors were new of course. so we mark them as unwanted.
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("art.in", "r", stdin);
+    freopen("art.out", "w", stdout);
+
+    int n; cin >> n;
+    vector <pair<int,int>> X(10, {INT_MAX, INT_MIN}), Y(10, {INT_MAX, INT_MIN});
+    set <int> s;
+    vector <vector <int>> a(10, vector<int> (10));
+    for(int i=0; i<n; i++){
+        string row; cin >> row;
+        int j=0;
+        for(char c: row){
+            int x;
+            x = a[i][j] = (c-'0');
+            s.insert(x);
+            X[x].first = min(j, X[x].first); Y[x].first = min(Y[x].first, i);
+            X[x].second = max(j, X[x].second); Y[x].second = max(Y[x].second, i);
+            j++;
+        }
+    }
+    map <int,int> mp;
+    for(auto i: s){
+        if(i == 0) continue;
+        for(int j=Y[i].first; j <= Y[i].second; j++){
+            for(int k=X[i].first; k<=X[i].second; k++){
+                if(a[j][k] != i)
+                    mp[a[j][k]] = 1;
+            }
+        }
+    }
+    int ans =0;
+    for(auto i: s){
+        if(i == 0) continue;
+        if(mp[i] == 0) ans++;
+    }
+    cout << ans << "\n";
+    return 0;
+}
