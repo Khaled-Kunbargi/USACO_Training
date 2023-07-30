@@ -1,0 +1,43 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int reach[100], to[100];
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("hoofball.in", "r", stdin);
+    freopen("hoofball.out", "w", stdout);
+
+    int n; cin >> n;
+    vector <int> a(n);
+    for(int i=0; i<n; i++) cin >> a[i];
+    sort(a.begin(), a.end());
+
+    if(n <= 2){
+        cout << 1; 
+        return 0;
+    }
+    reach[1]++;
+    reach[n-2]++;
+    to[0] = 1;
+    to[n-1] = n-2;
+
+    for(int i=1; i<n-1; i++){
+        if(a[i]-a[i-1] <= a[i+1]-a[i]){
+            reach[i-1]++;
+            to[i] = i-1;
+        }else{
+            reach[i+1]++;
+            to[i] = i+1;
+        }
+    }
+    int islands = 0;
+    if(reach[0] == 1 && reach[1] == 1 && to[2] != 1) islands++;
+    if(reach[n-1] == 1 && reach[n-2] == 1 && to[n-3] != n-2) islands++;
+
+    for(int i=2; i<n-3; i++){
+        if(reach[i] == 1 && reach[i+1] == 1 && to[i-1] != i && to[i+2] != i+1) islands++;
+    }
+    cout << count(reach, reach+n, 0) + islands;
+    return 0;
+}
