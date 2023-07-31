@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("stacking.in", "r", stdin);
+    //freopen("stacking.out", "w", stdout);
+
+    int n, m, q; cin >> n >> m >> q;
+    vector <vector<int>> h(n+1, vector<int> (m+1)), v(n+1, vector<int> (m+1));
+    vector <vector<int>> a(n+1, vector<int> (m+1)), pre(n+1, vector<int> (m+1));
+    for(int i=1; i<=n; i++){
+        for(int j=1; j<=m; j++){
+            char c; 
+            cin >> c;
+            a[i][j] = c-'0';
+            pre[i][j] = a[i][j] + pre[i-1][j] + pre[i][j-1] - pre[i-1][j-1];
+            v[i][j] = (a[i-1][j] && a[i][j]) + v[i-1][j] + v[i][j-1] - v[i-1][j-1];
+            h[i][j] = (a[i][j-1] && a[i][j]) + h[i-1][j] + h[i][j-1] - h[i-1][j-1];
+        }
+    }
+    while(q--){
+        int y1, x1, y2, x2;
+        cin >> y1 >> x1 >> y2 >> x2;
+        int cnt = pre[y2][x2] - pre[y2][x1-1] - pre[y1-1][x2] + pre[y1-1][x1-1];
+        int h_edges = h[y2][x2] - h[y2][x1] - h[y1-1][x2] + h[y1-1][x1];
+        int v_edges = v[y2][x2] - v[y2][x1-1] - v[y1][x2] + v[y1][x1-1];
+        int edges = h_edges + v_edges;
+        cout << cnt - edges << "\n";
+    }
+    return 0;
+}
