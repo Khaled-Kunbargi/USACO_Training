@@ -1,0 +1,31 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+int N = 1002;
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("lazy.in", "r", stdin);
+    freopen("lazy.out", "w", stdout);
+
+    int n, k; cin >> n >> k;
+    vector <vector<int>> pre(N, vector<int>(N));
+    
+    for(int i=0; i<n; i++){
+        int x1, y1, x2, y2; cin >> y1 >> x1 >> y2 >> x2;
+        x1++, y1++;
+        pre[y1][x2+1]--;
+        pre[y2+1][x2+1]++;
+        pre[y2+1][x1]--;
+        pre[y1][x1]++;
+    }
+    int c = 0;
+    for(int i=1; i<N; i++){
+        for(int j=1; j<N; j++){
+            pre[i][j] = pre[i-1][j] + pre[i][j-1] - pre[i-1][j-1] + pre[i][j]; 
+            if(pre[i][j] == k) c++;
+        }
+    }
+    cout << c;
+    return 0;
+}
