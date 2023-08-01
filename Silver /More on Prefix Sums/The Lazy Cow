@@ -1,0 +1,35 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("lazy.in", "r", stdin);
+    freopen("lazy.out", "w", stdout);
+
+    int n, k; cin >> n >> k;
+    int new_n = 2*n-1;
+    vector <vector<int>> pre(new_n+1, vector<int>(new_n+1)), field(new_n, vector<int>(new_n));
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++) cin >> field[i+j][n-i+j-1];
+    }
+
+    for(int i=0; i<new_n; i++){
+        for(int j=0; j<new_n; j++){
+            pre[i+1][j+1] = pre[i+1][j] + pre[i][j+1] - pre[i][j] + field[i][j];
+        }
+    }
+
+    int ans = 0;
+    for(int i=k; i<new_n-k; i++){
+        for(int j=k; j<new_n-k; j++){
+            ans = max(ans, 
+                pre[i+k+1][j+k+1] - pre[i-k][j+k+1] - pre[i+k+1][j-k] + pre[i-k][j-k]
+            );
+        }
+    }
+    if(k >= n)
+        ans = pre[new_n][new_n];
+    cout << ans ;
+    return 0;
+}
