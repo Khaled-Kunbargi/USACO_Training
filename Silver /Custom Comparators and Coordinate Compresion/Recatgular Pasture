@@ -1,0 +1,60 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define s second
+#define f first
+
+bool cmp(pair<int,int> a, pair<int,int> b){
+    return a.s < b.s;
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("wormsort.in", "r", stdin);
+    //freopen("wormsort.out", "w", stdout);
+
+    int n; cin >> n;
+    vector <pair<int,int>> cows(n);
+    for(auto &i: cows){
+        cin >> i.first >> i.second;
+    }
+
+    sort(cows.begin(), cows.end());
+    for(int i=0; i<n; i++) cows[i].first = i+1;
+
+    sort(cows.begin(), cows.end(), cmp);
+    for(int i=0; i<n; i++) cows[i].second = i+1;
+
+    vector<vector<int>> pre(n+1, vector<int>(n+1));
+    for(auto i: cows){
+        //cout << i.first << ' ' << i.second << "\n";
+        pre[i.first][i.second] = 1;
+    }
+
+    for(int i=1; i<=n; i++){
+        for(int j=1; j<=n; j++){
+            pre[i][j] += pre[i-1][j] + pre[i][j-1] - pre[i-1][j-1];
+        }
+    }
+
+    /*for(int i=1; i<=n; i++){
+        for(int j=1; j<=n; j++) cout << pre[i][j] << ' ';
+        cout << "\n";
+    }*/
+    ll ans = 0;
+    for(int i=0; i<n; i++){
+        for(int j=i+1; j<n; j++){
+            int x1 = min(cows[i].f, cows[j].f), x2 = max(cows[i].f, cows[j].f);
+            int y1 = min(cows[i].s, cows[j].s), y2 = max(cows[i].s, cows[j].s);
+
+            //cout << x1 << ' ' << x2 << " " << y1 << ' ' << y2 << ' ';
+            int high = pre[x2][y1] - pre[x1-1][y1];
+            int low = 1 + pre[x2][n] - pre[x2][y2] - pre[x1-1][n] + pre[x1-1][y2];
+            //cout << low << ' ' << high << "\n";
+            ans += (ll) high*low;
+        }
+    }
+    ans += n+1;
+    cout << ans;
+    return 0;
+}
