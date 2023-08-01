@@ -1,0 +1,46 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define s second
+#define f first
+#define pb push_back
+
+vector <int> indices;
+
+int Difference_Array[400005], prefix_sum[400005];
+
+
+int getCompressedValue(int a){
+    return lower_bound(indices.begin(), indices.end(), a) - indices.begin();
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("wormsort.in", "r", stdin);
+    //freopen("wormsort.out", "w", stdout);
+
+    int n; cin >> n;
+    vector <pair<int,int>> v(n);
+    for(int i=0; i<n; i++){
+        int a, b; cin >> a >> b;
+        indices.pb(a);
+        indices.pb(b);
+        v[i].f = a; v[i].s = b;
+    }
+    sort(indices.begin(), indices.end());
+    indices.erase(unique(indices.begin(), indices.end()), indices.end());
+
+
+    for(int i=0; i<n; i++){
+        Difference_Array[getCompressedValue(v[i].f) + 1]++;
+        Difference_Array[getCompressedValue(v[i].s) + 1]--;
+    }
+
+    int mx = 0;
+    for(int i=1; i<=indices.size(); i++){
+        prefix_sum[i] = prefix_sum[i-1] + Difference_Array[i];
+        mx = max(mx, prefix_sum[i]);
+    }
+    cout << mx;
+    return 0;
+}
