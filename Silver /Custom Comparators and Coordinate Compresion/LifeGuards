@@ -1,0 +1,46 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define s second
+#define f first
+#define pb push_back
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("lifeguards.in", "r", stdin);
+    freopen("lifeguards.out", "w", stdout);
+
+    int n; cin >> n;
+    vector <pair<int,int>> v(n);
+    for(int i=0; i<n; i++){
+        cin >> v[i].f >> v[i].s;
+    }
+
+    sort(v.begin(), v.end());
+
+    int total_time = 0, l=0, r=0;
+    for(int i=0; i<n; i++){
+        if(v[i].s > r){
+            l = max(r, v[i].f);
+            r = v[i].s;
+            total_time += max(r-l, 0);
+        }
+    }
+
+    if(n == 1){
+        cout << 0;
+        return 0;
+    }
+    vector <int> alone_time(n);
+
+    for(int i=0; i<n; i++){
+        alone_time[i] = v[i].s - v[i].f;
+        if(i > 0)
+            alone_time[i] -= max(v[i-1].s - v[i].f, 0);
+        if(i < n-1)
+            alone_time[i] -= max(v[i].s - v[i+1].f, 0);
+        alone_time[i] = max(alone_time[i], 0);
+    }
+    cout << total_time - *min_element(alone_time.begin(), alone_time.end());
+    return 0;
+}
