@@ -1,0 +1,34 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+//There is an edge case where l is the same.
+//Then you should sort them decreasing by their r.
+bool cmp(const pair<int,int> &a, const pair<int,int> &b){
+    if(a.first == b.first) return a.second > b.second;
+    return a.first < b.first;
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("mountains.in", "r", stdin);
+    freopen("mountains.out", "w", stdout);
+
+    int n; cin >> n;
+    vector <pair<int,int>> a;
+    for(int i=0; i<n; i++){
+        int x, y; cin >> x >> y;
+        a.push_back({x-y, x+y});
+    }
+    sort(a.begin(), a.end(), cmp);
+    int mx = INT_MIN, cnt=0;
+    for(int i=0; i<n; i++){
+        if(mx >= a[i].second){
+            cnt++;
+        }else{
+            mx = a[i].second;
+        }
+    }
+    cout << n-cnt;
+    return 0;
+}
