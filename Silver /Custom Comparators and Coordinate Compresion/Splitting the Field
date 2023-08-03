@@ -1,0 +1,49 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define s second
+#define f first
+
+int n;
+vector <pair<int,int>> a;
+ll search(){
+    sort(a.begin(), a.end());
+
+    multiset <int> cur, other;
+
+    for(auto i: a){
+        other.insert(i.s);
+    }
+    ll area = (ll) (a.back().f - a.front().f) * (*other.rbegin() - *other.begin());
+
+    ll best = LLONG_MAX;
+    for(int i=0; i<n-1; i++){
+        cur.insert(a[i].s);
+        other.erase(other.find(a[i].s));
+        if(a[i].f == a[i+1].f) continue;
+
+        ll rec1 = (ll) (*other.rbegin() - *other.begin()) * (a.back().f - a[i+1].f);
+        ll rec2 = (ll) (*cur.rbegin() - *cur.begin()) * (a[i].f - a[0].f);
+        best = min(best, rec1 + rec2);
+    }
+    return area - best;
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("split.in", "r", stdin);
+    freopen("split.out", "w", stdout);
+
+    cin >> n;
+    a.resize(n);
+    for(int i=0; i<n; i++){ cin >> a[i].f >> a[i].s;}
+
+    ll ans = 0;
+    ans = max(ans, search());
+
+    for(auto &i: a) swap(i.f, i.s);
+    ans = max(ans, search());
+
+    cout << ans;
+    return 0;
+}
