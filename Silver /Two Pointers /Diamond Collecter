@@ -1,0 +1,36 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("diamond.in", "r", stdin);
+    freopen("diamond.out", "w", stdout);
+
+    int n, k; cin >> n >> k;
+    vector <int> a(n);
+    for(int i=0; i<n; i++){
+        cin >> a[i];
+    }
+    sort(a.begin(), a.end());
+
+    vector <int> max_to_left(n); //how many diamonds we can take after diamond i.
+    for(int l=0; l<n; l++){
+        int r = l;
+        while(a[r] - a[l] <= k && r < n) r++;
+        max_to_left[l] = r-l;
+    }
+
+    vector <int> max_afterI(n+1); //the maximum amount of diamonds we can take for any x >= i.
+    max_afterI[n] = 0;
+    for(int i=n-1; i>=0; i--){
+        max_afterI[i] = max(max_afterI[i+1], max_to_left[i]);
+    }
+
+    int ans =0;
+    for(int l=0; l<n; l++){
+        ans = max(ans, max_to_left[l] + max_afterI[l + max_to_left[l]]);
+    }
+    cout << ans;
+    return 0;
+}
