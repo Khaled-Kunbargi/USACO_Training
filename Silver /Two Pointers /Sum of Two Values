@@ -1,0 +1,30 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("split.in", "r", stdin);
+    //freopen("split.out", "w", stdout);
+
+    int n, x; cin >> n >> x;
+    vector <pair<int,int>> a;
+    for(int i=0; i<n; i++){
+        int y; cin >> y;
+        a.push_back({y, i+1});
+    }
+
+    sort(a.begin(), a.end());
+
+    for(int l=0, r=n-1; r > l; l++){
+        while(a[l].first + a[r].first > x && r > l)
+            r--;
+        if(r == l) break;
+        if(a[l].first + a[r].first == x){
+            cout << a[l].second << ' ' << a[r].second;
+            return 0;
+        }
+    }
+    cout << "IMPOSSIBLE";
+    return 0;
+}
