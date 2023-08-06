@@ -1,0 +1,41 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+bool cmp(vector<int>a, vector<int>b){
+    return a[1] < b[1];
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("convention2.in", "r", stdin);
+    freopen("convention2.out", "w", stdout);
+
+    int n; cin >> n;
+    vector <vector<int>> v;
+    for(int i=0; i<n; i++){
+        int l, d; cin >> l >> d;
+        v.push_back({i, l, d});
+    }
+
+    sort(v.begin(), v.end(), cmp);
+
+    set <vector<int>> waiting;
+    int time = 0, mx = 0;
+    for(int i=0; i<n || !waiting.empty();){
+        if(i < n && v[i][1] <= time){
+            waiting.insert(v[i]);
+            i++;
+        }else if(waiting.empty()){
+            time = v[i][1] + v[i][2];
+            i++;
+        }else{
+            vector <int> temp = *waiting.begin();
+            waiting.erase(waiting.begin());
+            mx = max(mx, time - temp[1]);
+            time += temp[2];
+        }
+    }
+    cout << mx;
+    return 0;
+}
