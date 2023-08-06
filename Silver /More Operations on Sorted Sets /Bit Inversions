@@ -1,0 +1,55 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+string s;
+set <int> indices;
+multiset <int> ret;
+
+void modify(int i){
+    if(i == 0 || i == s.size()) return;
+
+    if(s[i] == s[i-1]){
+        auto a = indices.lower_bound(i);
+        auto b = a; a--;
+        ret.erase(ret.find(*b - *a));
+        ret.insert(*b - i);
+        ret.insert(i - *a);
+        indices.insert(i);
+    }else{
+        indices.erase(i);
+        auto a = indices.lower_bound(i);
+        auto b = a; a--;
+        ret.erase(ret.find(*b - i));
+        ret.erase(ret.find(i - *a));
+        ret.insert(*b-*a);
+    }
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("diamond.in", "r", stdin);
+    //freopen("diamond.out", "w", stdout);
+
+    cin >> s;
+    indices.insert(0);
+    for(int i=1; i<s.size(); i++){
+        if(s[i] != s[i-1]){
+            ret.insert(i - *indices.rbegin());
+            indices.insert(i);
+        }
+    }
+    ret.insert(s.size() - *indices.rbegin());
+    indices.insert(s.size());
+    int m; cin >> m;
+    for(int i=0; i<m; i++){
+        int x; cin >> x;
+        modify(x-1);
+        modify(x);
+        if(s[x-1] == '1') s[x-1] = '0';
+        else s[x-1] = '1';
+        cout << *ret.rbegin() << " ";
+    }
+
+    return 0;
+}
