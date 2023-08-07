@@ -1,0 +1,40 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+bool cmp(const pair<int,int> &a, const pair<int,int> &b){
+    return a.second < b.second;
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("convention2.in", "r", stdin);
+    //freopen("convention2.out", "w", stdout);
+
+    int n, k; cin >> n >> k;
+    vector <pair<int,int>> v;
+    for(int i=0; i<n; i++){
+        int a, b; cin >> a >> b;
+        v.push_back({a, b});
+    }
+    
+    sort(v.begin(), v.end(), cmp);
+
+
+    multiset <int> s = {0};
+    int cnt = 0;
+    for(int i=0; i<n; i++){
+        auto j = s.lower_bound(v[i].first);
+        if(j != s.begin()) j--;
+        if(*j <= v[i].first){
+            s.erase(j);
+            s.insert(v[i].second);
+            cnt++;
+        }else if(s.size() < k){
+            s.insert(v[i].second);
+            cnt++;
+        }
+    }
+    cout << cnt;
+    return 0;
+}
