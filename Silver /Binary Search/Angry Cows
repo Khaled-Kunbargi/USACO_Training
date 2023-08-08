@@ -1,0 +1,80 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+//We use the ok_first function beacause it is a monotonic function.
+//and because there is no monotonic function that gives you the right position at which you can destroy all
+//haybales with p power.
+
+int n;
+vector <ll> a;
+bool ok_first(ll pos, ll power){
+    if(a.front() < pos-power){
+        ll cur = pos;
+        ll cur_r = power;
+        while(cur != a.front()){
+            ll next = *lower_bound(a.begin(), a.end(), cur-cur_r);
+            if(next >= cur) return false;
+            cur = next;
+            cur_r -= 2;
+        }
+    }
+    return true;
+}
+
+bool ok_last(ll pos, ll power){
+    if(pos + power < a.back()){
+        ll cur = pos;
+        ll cur_r = power;
+        while(cur != a.back()){
+            auto j = upper_bound(a.begin(), a.end(), cur + cur_r);
+            if(*prev(j) <= cur + cur_r) j--;
+            ll next = *j;
+            if(next <= cur) return false;
+            cur = next;
+            cur_r -= 2;
+        }
+    }   
+    return true;
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("angry.in", "r", stdin);
+    freopen("angry.out", "w", stdout);
+    
+    cin >> n;
+    a.resize(n);
+    for(int i=0; i<n; i++){
+        ll x; cin >> x;
+        a[i] = 2LL*x;
+    };
+
+    sort(a.begin(), a.end());
+    a.resize(unique(a.begin(), a.end()) - a.begin());
+
+    ll min = 0, max = 1000000000;
+    //Invariant: f(max) = 1, f(min) = 0.
+    while(max > min+1){
+        ll p = (min+max)/2;
+        ll l = a.front(), r = a.back();
+        //Invariant: f(l) = 1, f(r) = 0.
+        while(r > l+1){
+            ll m = (l+r)/2;
+            if(ok_first(m, p)){
+                l = m;
+            }else{
+                r = m;
+            }
+        }
+
+        if(ok_last(l, p)){
+            max = p;
+        }else{
+            min = p;
+        }
+    }
+    min++;
+    cout <<  min/2 << "." << (min%2 ? 5: 0);
+    return 0;
+}
