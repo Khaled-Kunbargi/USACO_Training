@@ -1,0 +1,39 @@
+#include <bits/stdc++.h>
+using namespace std;
+  
+map <int,vector<int>> adj;
+map <int,int> vis, comp;
+int c = 1;
+
+void DFS(int node){
+    if(vis[node]) return;
+    vis[node] = 1;
+    comp[node] = c;
+    for(auto i: adj[node]){
+        DFS(i);
+    }
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    int n, m; cin >> n >> m;
+    for(int i=0; i<m; i++){
+        int a, b; cin >> a >> b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+    
+    for(int i=1;i<=n; i++){
+        if(!vis[i]){DFS(i); c++;}
+    }
+
+    cout << --c-1 << "\n";
+    vector <int> v(c);
+    for(int i=1; i<=n; i++){
+        v[comp[i]] = i;
+    }
+    for(int i=1; i<c; i++){
+        cout << v[i] << ' ' << v[i+1] << "\n";
+    }
+    return 0;
+}
