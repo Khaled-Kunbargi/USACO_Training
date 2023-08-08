@@ -1,0 +1,49 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+map <int,vector<int>> adj;
+vector <int> vis, comp;
+int c=0;
+
+void DFS(int node){
+    if(vis[node]) return;
+    vis[node] = 1;
+    comp[node] = c;
+    for(auto i: adj[node]) DFS(i);
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("fenceplan.in", "r", stdin);
+    freopen("fenceplan.out", "w", stdout);
+
+    int n,m; cin >> n >> m;
+    vector <pair<int,int>> v(n);
+    for(int i=0; i<n; i++) cin >> v[i].first >> v[i].second;
+    for(int i=0; i<m; i++){
+        int a, b; cin >> a >> b;
+        a--, b--;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+    vis.resize(n); comp.resize(n);
+    for(int i=0; i<n; i++){
+        if(!vis[i]){ DFS(i); c++; }
+    }
+    vector <pair<int,int>> mins(c, {1e9, 1e9}), maxs(c, {0, 0});;
+    for(int i=0; i<n; i++){
+        //smallest x and y. in a component.
+        mins[comp[i]].first = min(mins[comp[i]].first, v[i].first);
+        mins[comp[i]].second = min(mins[comp[i]].second, v[i].second);
+        //largest x and y in a component.
+        maxs[comp[i]].first = max(maxs[comp[i]].first, v[i].first);
+        maxs[comp[i]].second = max(maxs[comp[i]].second, v[i].second);
+    }
+    int min_perimeter = 1e9;
+    for(int i=0; i<c; i++){
+        min_perimeter = min(min_perimeter, 2*(maxs[i].second-mins[i].second + maxs[i].first - mins[i].first));
+    }
+    cout << min_perimeter;
+    return 0;
+}
