@@ -1,0 +1,50 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+vector <int> adj[100000][2];
+vector <bool> vis;
+
+void dfs(int node, bool id){
+    if(vis[node]) return;
+    vis[node] = 1;
+    for(auto i: adj[node][id]){
+        dfs(i, id);
+    }
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("fenceplan.in", "r", stdin);
+    //freopen("fenceplan.out", "w", stdout);
+
+    int n,m; cin >> n >> m;
+    vis.assign(n, 0);
+    for(int i=0; i<m; i++){
+        int a, b; cin >> a >> b;
+        a--, b--;
+        adj[a][0].push_back(b);
+        adj[b][1].push_back(a);
+    }
+
+    dfs(0, 0);
+    for(int i=0; i<n; i++){
+        if(vis[i] == 0){
+            cout << "NO\n";
+            cout << 1 << " " << i+1 << "\n";
+            return 0;
+        }
+    }
+
+    vis.assign(n,0);
+    dfs(0, 1);
+    for(int i=0; i<n; i++){
+        if(!vis[n-i-1]){
+            cout << "NO\n";
+            cout << n-i << " " << 1 << "\n";
+            return 0;
+        }
+    }
+    cout << "YES";
+    return 0;
+} 
