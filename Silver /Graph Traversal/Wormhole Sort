@@ -1,0 +1,67 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+struct edge {
+    int a, b, w;
+};
+bool cmp(edge a, edge b){
+    return a.w > b.w;
+}
+
+vector <vector<int>> adj;
+vector <int> vis, comp;
+int c;
+
+void dfs(int node){
+    if(vis[node]) return;
+    vis[node] = 1;
+    comp[node] = c;
+    for(auto i: adj[node]) dfs(i);
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("wormsort.in", "r", stdin);
+    freopen("wormsort.out", "w", stdout);
+
+    int n,m; cin >> n >> m;
+    vector <int> a(n);
+    for(int i=0; i<n; i++){ cin >> a[i]; a[i]--;}
+    vector<pair<int,int>> v;
+    for(int i=0; i<n; i++){
+        if(i != a[i]) v.push_back({i, a[i]});
+    }
+    vector <edge> e(m);
+    for(int i=0; i<m; i++){
+        cin >> e[i].a >> e[i].b >> e[i].w;
+        e[i].a--, e[i].b--;
+    }
+    if(v.empty()) {
+        cout << -1;
+        return 0;
+    }
+    sort(e.begin(), e.end(), cmp);
+    int l=0, r=m-1; //f(r) = 1, f(l) = 0. 00001111
+    while(r > l+1){
+        int M = (l+r)/2;
+        adj.clear();
+        adj.resize(n); vis.assign(n, 0);
+        comp.assign(n, -1); c = 0;
+        for(int i=0; i<=M; i++){
+            adj[e[i].a].push_back(e[i].b);
+            adj[e[i].b].push_back(e[i].a);
+        }
+        for(int i=0; i<n; i++){
+            if(!vis[i]){ dfs(i); c++;}
+        }
+        bool ok = true;
+        for(auto i: v){
+            if(comp[i.first] != comp[i.second]){ok = false; break;}
+        }
+        if(!ok) l = M;
+        else  r = M;
+    }
+    cout << e[r].w;
+    return 0;
+} 
