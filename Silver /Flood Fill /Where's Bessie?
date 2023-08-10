@@ -1,0 +1,92 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+const int Max_N = 20;
+
+struct PCL {
+    int i, j, y, x;
+};
+
+string grid[Max_N];
+bool vis[Max_N][Max_N];
+int n, m, en, em, sn, sm, c=0;
+
+int I_change[] = {0, 1, -1, 0};
+int J_change[] = {1, 0, 0, -1};
+
+void flood_fill(int i, int j, char color){
+    if(i<sn || i>en || j<sm || j>em 
+    || vis[i][j]
+    || grid[i][j] != color
+    ) return;
+
+    vis[i][j] = 1;
+
+    flood_fill(i-1, j, color);
+    flood_fill(i+1, j, color);
+    flood_fill(i, j-1, color);
+    flood_fill(i, j+1, color);
+}
+
+bool isPCL(int i, int j, int x, int y){
+    sm = j;
+    em = x;
+    sn = i;
+    en = y;
+    vector <int> regions(26, 0);
+    for(int i=0; i<20; i++){
+        for(int j=0; j<20; j++) vis[i][j] = 0;
+    }
+
+    for(int i=sn; i<=en; i++){
+        for(int j=sm; j<=em; j++){
+            if(!vis[i][j]){
+                flood_fill(i, j, grid[i][j]);   
+                regions[grid[i][j] - 'A']++;
+            }
+        }
+    }
+
+    int colors=0; bool region_with_one_color = false, regions_with_more = false;
+    for(int i=0; i<26; i++){
+        if(regions[i] != 0) colors++;
+        if(regions[i] == 1) region_with_one_color = 1;
+        if(regions[i] > 1) regions_with_more = 1;
+    }
+    if(colors == 2 && region_with_one_color && regions_with_more){ 
+        return 1;
+    }
+    return 0;
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("where.in", "r", stdin);
+    freopen("where.out", "w", stdout);
+
+    cin >> n;
+    for(int i=0; i<n; i++) cin >> grid[i];
+
+    vector<PCL> v;
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){ 
+            for(int y=0; y<n; y++){
+                for(int x=0; x<n; x++){
+                    if(isPCL(i, j, x, y)) v.push_back({i, j, y, x});
+                }
+            }
+        }
+    }
+
+    int ans = 0;
+    for(int j=0; j<v.size(); j++){
+        bool isPCL = true;
+        for(int i=0; i<v.size(); i++){
+            if(i == j) continue;
+            if(v[i].i <= v[j].i && v[i].j <= v[j].j && v[i].x >= v[j].x && v[i].y >= v[j].y){isPCL=false; break;} 
+        }
+        ans += isPCL;
+    }
+    cout << ans;
+    return 0;
+} 
