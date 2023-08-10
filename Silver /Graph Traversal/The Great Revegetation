@@ -1,0 +1,56 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+vector <vector<int>> adj;
+map <pair<int,int>, bool> edge;
+vector <int> color;
+bool ok = true;
+
+void dfs(int node, bool cur_color){
+    color[node] = cur_color;
+    for(auto i: adj[node]){
+        if(color[i] == -1){
+            if(edge[{node, i}]){
+                dfs(i, 1-cur_color);
+            }else{
+                dfs(i, cur_color);
+            }
+        }else{
+            if(edge[{node, i}] && color[i] == color[node]) ok = false;
+            if(!edge[{node, i}] && color[i] != color[node]) ok = false;
+        }
+    }
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("revegetate.in", "r", stdin);
+    //freopen("revegetate.out", "w", stdout);
+
+    int n,m; cin >> n >> m;
+    adj.resize(n); color.assign(n, -1);
+    for(int i=0; i<m; i++){
+        char id; cin >> id; 
+        int a,b; cin >> a >> b;
+        adj[--a].push_back(--b);
+        adj[b].push_back(a);
+        edge[{a, b}] = edge[{b, a}] = (id == 'D');
+    }
+
+    int k=0;
+    for(int i=0; i<n; i++){
+        if(color[i] == -1){
+            color[i] = 0;
+            dfs(i, 0);
+            if(ok) k++;
+            ok = 1;
+        }
+    }
+    if(k > 0){ 
+        cout << 1;
+        for(int i=0; i<k; i++) cout << 0;
+    }else  cout << 0;
+    
+    return 0;
+} 
