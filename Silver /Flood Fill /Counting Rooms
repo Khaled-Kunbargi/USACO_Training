@@ -1,0 +1,48 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+ 
+vector <vector <bool>> grid, vis;
+int n, m;
+ 
+void flood_fill(int i, int j){
+    if(i<0 || i>=n || j<0 || j>=m 
+        || vis[i][j]
+        || !grid[i][j]
+    ) return;
+    
+    vis[i][j] = 1;
+ 
+    flood_fill(i, j-1);
+    flood_fill(i, j+1);
+    flood_fill(i-1, j);
+    flood_fill(i+1, j);
+}
+ 
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("revegetate.in", "r", stdin);
+    //freopen("revegetate.out", "w", stdout);
+ 
+    cin >> n >> m;
+    grid.resize(n); vis.resize(n);
+    for(int i=0; i<n; i++){
+        grid[i].resize(m);
+        vis[i].resize(m);
+        for(int j=0; j<m; j++){
+            char c; cin >> c;
+            if(c == '.') grid[i][j] = 1;
+        }
+    }
+    int c=0;
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+            if(!vis[i][j] && grid[i][j]){
+                flood_fill(i, j);
+                c++;
+            }
+        }
+    }
+    cout << c;
+    return 0;
+} 
