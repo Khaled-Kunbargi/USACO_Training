@@ -1,0 +1,70 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+vector <vector <bool>> vis;
+vector <string> grid;
+int n, m;
+
+bool valid(int i, int j){
+    if(i<0 || i>=n || j<0 || j>=m 
+        || vis[i][j]
+        || grid[i][j] == '.'
+    ) return 0;
+    return 1;
+}
+
+bool onSide(int i, int j){
+    if(i<0 || i>=n || j<0 || j>=m 
+        || grid[i][j] == '.'
+    ) return 0;
+    return 1;
+}
+
+int I_change[] = {0, 1, -1, 0};
+int J_change[] = {1, 0, 0, -1};
+
+int s=0, p=0;
+void flood_fill(int i, int j){
+    if(!valid(i, j)) return; 
+
+    vis[i][j] = 1;
+    s++;
+
+    for(int k=0; k<4; k++){
+        if(!onSide(i + I_change[k], j + J_change[k])) p++;
+        flood_fill(i + I_change[k], j + J_change[k]);
+    }
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("perimeter.in", "r", stdin);
+    freopen("perimeter.out", "w", stdout);
+
+    cin >> n;
+    m = n;
+    grid.resize(n);
+    vis.resize(n);
+    for(int i=0; i<n; i++){ cin >> grid[i]; vis[i].resize(m);}
+
+    pair <int,int> ans = {0, 0};
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+            if(!vis[i][j] && grid[i][j] == '#'){
+                flood_fill(i, j);
+                //cout << s << " " << p << "\n";
+                if(ans.first < s){
+                    ans.first = s;
+                    ans.second = p;
+                }
+                if(ans.first == s){
+                    ans.second = min(ans.second, p);
+                }
+                p = s = 0;
+            }
+        }
+    }
+    cout << ans.first << ' ' << ans.second;
+    return 0;
+} 
