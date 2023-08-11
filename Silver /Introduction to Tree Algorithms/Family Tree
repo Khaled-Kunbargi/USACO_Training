@@ -1,0 +1,82 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+map <string, vector<string>> adj;
+map <string, int> depth, vis;
+map <string, string> pa;
+
+void goDown(string pa, string cur){
+    depth[cur] = 1 + depth[pa];
+    for(auto i: adj[cur]){
+        if(i != pa) goDown(cur, i);
+    }
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("family.in", "r", stdin);
+    freopen("family.out", "w", stdout);
+    
+    int n; cin >> n;
+    string a, b; cin >> a >> b;
+    set <string> cows;
+    for(int i=0; i<n; i++){
+        string mother, child; cin >> mother >> child;
+        cows.insert(mother); cows.insert(child);
+        pa[child] = mother;
+        depth[mother] = 1 + depth[pa[mother]];
+        adj[mother].push_back(child);
+        adj[child].push_back(mother);
+        goDown(pa[mother], mother);
+    }
+
+    if(depth[a] == depth[b]){
+        if(pa[a] != pa[b]){
+            cout << "COUSINS";
+        }else cout << "SIBLINGS";
+        return 0;
+    }
+
+    if(depth[a] < depth[b]) swap(b, a);
+
+    string cur = b;
+    while(cur != ""){
+        vis[cur] = 1;
+        cur = pa[cur];
+    }
+    cur = a;
+    while(vis[cur] == 0 && pa[cur] != ""){
+        cur = pa[cur];
+    }
+    if(vis[cur]){
+        string common_ancestor = cur;
+        int dist = 0;
+        cur = b;
+        while(cur != common_ancestor){
+            dist++;
+            cur = pa[cur];
+        }
+        int k = depth[a] - depth[b];
+        string relation;
+        if(dist <= 1){
+            if(k == 1){
+                relation = (dist == 0 ? "mother" : "aunt");
+            }else if(k == 2){
+                relation = (dist == 0 ? "grand-mother": "great-aunt");
+            }else{
+                k-=2;
+                for(int i=0; i<k; i++){
+                    relation += "great-";
+                }
+                relation += (dist == 0 ? "grand-mother": "great-aunt");
+            }
+            cout << b << " is the " << relation << " of " << a;
+        }else{
+            cout << "COUSINS";
+        }
+    }else{
+        cout << "NOT RELATED";
+    }
+    return 0;   
+} 
