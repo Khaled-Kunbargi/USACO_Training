@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+vector <vector<int>> adj;
+vector <int> subtree_sz, depth;
+vector <ll> sum;
+
+int n;
+ll ans = 0;
+void dfs(int node, int pa, int d){
+    depth[node] = d;
+    subtree_sz[node] = 1;
+    for(auto i: adj[node]){
+        if(i == pa) continue;
+        depth[i] = depth[node] + 1;
+        ans += depth[i];
+        dfs(i, node, d+1);
+        subtree_sz[node] += subtree_sz[i];
+    }
+}
+
+void dfs2(int node, int pa){
+    if(pa != -1)
+        sum[node] = sum[pa] + (ll) (n - 2*subtree_sz[node]);
+    for(auto i: adj[node]){
+        if(i != pa) dfs2(i, node);
+    }
+}
+
+int main(){
+    //ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("milkvisits.in", "r", stdin);
+    //freopen("milkvisits.out", "w", stdout);
+
+    cin >> n;
+    adj.resize(n); subtree_sz.resize(n); depth.resize(n); sum.resize(n);
+    for(int i=0; i<n-1; i++){ 
+        int a, b; cin >> a >> b;
+        adj[--a].push_back(--b);
+        adj[b].push_back(a);
+    }
+
+    dfs(0, -1, 0);
+    
+    sum[0] = ans;
+    dfs2(0, -1);
+
+    for(int i=0; i<n; i++) cout << sum[i] << ' ';
+    return 0;   
+} 
