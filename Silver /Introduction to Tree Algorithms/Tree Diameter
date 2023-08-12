@@ -1,0 +1,64 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+string s;
+vector <vector<int>> adj;
+vector <int> toleaf, maxlength;
+
+void dfs(int node, int pa){
+    int mx = -1;
+    for(auto i: adj[node]){
+        if(i != pa){
+            dfs(i, node);
+            mx = max(mx, toleaf[i]);
+        }
+    }
+    int mx1=-1, mx2=0;
+    int j=0, idx;
+    for(auto i: adj[node]){
+        if(i != pa){
+            if(toleaf[i] > mx1){
+                mx1 = toleaf[i];
+                idx = j;
+            }
+        }
+        j++;
+    }
+    j=0;
+    for(auto i: adj[node]){
+        if(i != pa){
+            if(toleaf[i] > mx2 && j != idx){
+                mx2 = toleaf[i];
+            }
+        }
+        j++;
+    }
+    maxlength[node] = (adj[node].size() > 1 ? mx1 + mx2 + 2: mx1 + 1);
+    maxlength[node] = (mx1 == -1? 0: maxlength[node]);
+    toleaf[node] = (mx == -1? 0: mx+1);
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("milkvisits.in", "r", stdin);
+    //freopen("milkvisits.out", "w", stdout);
+    
+    int n; cin >> n;
+    adj.resize(n); toleaf.resize(n); maxlength.resize(n);
+    for(int i=0; i<n-1; i++){
+        int a, b; cin >> a >> b;
+        adj[--a].push_back(--b);
+        adj[b].push_back(a);
+    }
+
+    dfs(0, -1);
+
+    int diameter= 0;
+    for(int i=0; i<n; i++){
+        diameter=max(diameter, maxlength[i]);
+    }
+    cout << diameter;
+
+    return 0;   
+} 
