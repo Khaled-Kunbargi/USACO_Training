@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+//The cows in the cycle will always stay in their position. but when visiting a cycle we should mark visited all the connected component.
+
+vector <vector <int>> radj;
+vector <int> vis, succ;
+int length = 0;
+
+void rdfs(int x){
+    if(vis[x]) return;
+    vis[x] = 1;
+    for(auto i: radj[x]) rdfs(i);
+}
+
+void floyd(int x){
+    int a,b;
+    a = b = x;
+    do{
+        a = succ[a];
+        b = succ[succ[b]];
+    }while(a != b);
+
+    rdfs(a);
+
+    vis[a] = 1;
+    a = succ[a];
+    length = 1;
+    while(a != b){
+        vis[a] = 1;
+        a = succ[a];
+        length++;
+    }
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("shuffle.in", "r", stdin);
+    freopen("shuffle.out", "w", stdout);
+    
+    int n; cin >> n;
+    vis.resize(n); succ.resize(n); radj.resize(n);
+    for(int i=0; i<n; i++){
+        cin >> succ[i];
+        radj[--succ[i]].push_back(i);
+    }
+
+    int ans = 0;
+    for(int i=0; i<n; i++){
+        if(!vis[i]){
+            floyd(i);
+            //cout << i << " " << length << "\n";
+            ans += length;
+        }
+    }
+    cout << ans << "\n";
+    return 0;   
+} 
