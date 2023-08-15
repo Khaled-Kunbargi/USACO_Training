@@ -1,0 +1,29 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("shuffle.in", "r", stdin);
+    //freopen("shuffle.out", "w", stdout);
+    
+    string s; cin >> s;
+    int occ[10] = {0};
+    map <int,int> mp;
+    mp[0] = 1;
+    for(int i=0; i<s.size(); i++){
+        occ[s[i] - '0'] = (occ[s[i] - '0'] + 1)%2;
+        int val = 0;
+        for(int j=0; j<10; j++){
+            if(occ[j]) val += 1 << j;
+        }
+        mp[val]++;
+    }
+
+    ll ans  = 0;
+    for(int i=0; i<(1 << 10); i++){
+        ans +=  (ll) mp[i] * (mp[i]-1)/2;
+    }   
+    cout << ans;
+    return 0;   
+} 
