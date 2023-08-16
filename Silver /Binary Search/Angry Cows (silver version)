@@ -1,0 +1,35 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("angry.in", "r", stdin);
+    freopen("angry.out", "w", stdout);
+
+    int n, k; cin >> n >> k;
+    set <int> s;
+    for(int i=0; i<n; i++){
+        int x; cin >> x;
+        s.insert(x);
+    }
+
+    int l=0, r=1e9;
+    while(r > l+1){
+        int m = (l+r)/2;
+        int g=1;
+        int i=*s.begin() + m;
+        auto j = s.upper_bound(i + m); j--;
+        while(j != prev(s.end())){
+            i = *next(j) + m;
+            j = s.upper_bound(i+m); j--;
+            g++;
+        }
+        if(g > k)
+            l = m;
+        else
+            r = m;
+    }
+    cout << r;
+    return 0;   
+} 
