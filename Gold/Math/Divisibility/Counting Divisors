@@ -1,0 +1,37 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+unordered_map <int,int> mp;
+set <int> s;
+void f(int x){
+    for(int i=2; i*i <= x; i++){
+        while(x % i == 0){
+            mp[i]++;
+            s.insert(i);
+            x /= i;
+        }
+    }
+    if(x > 1){s.insert(x); mp[x]++;}
+}
+
+int num_of_divisors(int x){
+    f(x);
+    int p = 1;
+    for(auto i: s) p *= (mp[i]+1);
+    return p;
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("socdist.in", "r", stdin);
+    //freopen("socdist.out", "w", stdout);
+
+    int n; cin >> n;
+    for(int i=0; i<n; i++){
+        int x; cin >> x;
+        cout << num_of_divisors(x) << "\n";
+        mp.clear(); s.clear();
+    }
+    return 0;   
+} 
