@@ -1,0 +1,54 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+vector <ll> A,B,C;
+ll n, x, y;
+
+bool good(ll w){
+    ll lx = max(1LL, x-w), hx = min(x, x+y-w-1LL);
+    ll d= x+y-w;
+    for(int i=0; i<n; i++){
+        ll a=A[i], b=B[i], c=C[i];
+
+        //x + y = X+Y-w.
+        //x*a + y*b <= c.
+        // (a-b)*x <= c - b*d
+
+        if(b-a > 0LL){    
+            lx = max(lx, (-c + b * d + (b-a-1))/ (b-a));
+        }else if(a-b > 0LL){
+            hx = min(hx, (c-b*d)/(a-b));
+        }else{
+            if(a*d > c) return false;
+        }
+    }
+    return lx <= hx;
+}
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("socdist.in", "r", stdin);
+    //freopen("socdist.out", "w", stdout);
+
+    int t; cin >> t;
+    while(t--){
+        cin >> n >> x >> y;
+
+        for(int i=0; i<n; i++){
+            ll a, b, c; cin >> a >> b >> c;
+            A.push_back(a); B.push_back(b); C.push_back(c);
+        }
+        ll l=-1, r= x+y-2;
+        while(r > l+1){
+            ll m = (l+r)/2;
+            if(good(m))
+                r = m;
+            else
+                l = m;
+        }
+        cout << r << "\n";
+        A.clear(); B.clear(); C.clear();
+    }
+    return 0;   
+} 
