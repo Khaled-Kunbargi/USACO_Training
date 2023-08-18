@@ -1,0 +1,60 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+const int maxn = 1e6;
+int a[maxn+1];
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("socdist.in", "r", stdin);
+    //freopen("socdist.out", "w", stdout);
+
+    int n; cin >> n;
+    for(int i=0; i<n; i++){
+        int x; cin >> x;
+        a[x]++;
+    }
+
+    for(int gcd = maxn; gcd > 0; gcd--){
+        int div = 0;
+        for(int i =gcd; i<= maxn; i += gcd) div += a[i];
+        if(div >= 2){
+            cout << gcd; break;
+        }
+    }
+    return 0;   
+} 
+
+//solution 2:
+/*
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+ 
+const int maxn = 1e6;
+int a[maxn+1];
+ 
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("socdist.in", "r", stdin);
+    //freopen("socdist.out", "w", stdout);
+ 
+    int n; cin >> n;
+    for(int i=0; i<n; i++){
+        int x; 
+        cin >> x;
+        const int up = (int) sqrt(x);
+        for(int j=1; j <= up; j++){
+            if(x % j == 0){
+                a[j]++; 
+                if(j != x/j) a[x/j]++;
+            }
+        }
+    }
+    for(int i=maxn; i>=0; i--){
+        if(a[i] > 1){ cout << i; break; }
+    }
+    return 0;   
+} 
+*/
