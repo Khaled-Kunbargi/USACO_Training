@@ -1,0 +1,27 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("socdist.in", "r", stdin);
+    //freopen("socdist.out", "w", stdout);
+
+    int t; cin >> t;
+    while(t--){
+        int n; cin >> n;
+        string s; cin >> s;
+        int k=0, d=0;
+        map <pair<int,int>, int> mp;
+        for(char c: s){
+            k += (c == 'K');
+            d += (c == 'D');
+            int g = __gcd(k, d);
+            int d_ratio = d / g;
+            int k_ratio = k / g;
+            cout << ++mp[{d_ratio, k_ratio}] << " ";
+        }
+        cout << "\n";
+    }
+    return 0;   
+} 
