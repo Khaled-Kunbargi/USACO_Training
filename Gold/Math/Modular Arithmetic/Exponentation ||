@@ -1,0 +1,31 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+ll MOD = 1e9 + 7;
+
+ll power(ll b, ll p, ll m){
+    b %= m;
+    ll res = 1;
+    while(p > 0){
+        if(p & 1) res = res * b % m;
+        b = b * b % m;
+        p /= 2;
+    }
+    return res;
+}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("socdist.in", "r", stdin);
+    //freopen("socdist.out", "w", stdout);
+
+    int n; cin >> n;
+    for(int i=0; i<n; i++){
+        ll a, b, c; cin >> a >> b >> c;
+
+        ll p_b = power(b, c, MOD-1);
+        cout << power(a, p_b, MOD) << "\n";
+    }
+    return 0;   
+} 
