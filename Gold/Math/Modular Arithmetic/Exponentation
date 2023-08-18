@@ -1,0 +1,28 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+ll MOD = 1e9 + 7;
+
+ll power(ll b, ll p){
+    if(p == 0) return 1;
+    ll sq = power(b, p/2) % MOD;
+    sq = ((sq % MOD) * (sq % MOD)) % MOD;
+    if(p & 1){
+        sq = ((sq % MOD) * (b % MOD)) % MOD;
+    }
+    return sq % MOD;
+}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("socdist.in", "r", stdin);
+    //freopen("socdist.out", "w", stdout);
+
+    int n; cin >> n;
+    for(int i=0; i<n; i++){
+        ll a, b; cin >> a >> b;
+        cout << power(a, b) << "\n";
+    }
+    return 0;   
+} 
