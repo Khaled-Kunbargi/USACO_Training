@@ -1,0 +1,60 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+typedef pair<int,int> pi;
+
+//It's my first time to use map on vector to integers.
+int exponent;
+ 
+vector <pi> factor(int n){
+    map <int,int> factors;
+    for(int i=2; i*i <= n; i++){
+        while(n % i == 0){
+            factors[i]++;
+            n /= i;
+        }
+    }
+    if(n > 1) factors[n]++;
+    vector <pi> p;
+    for(auto i: factors){
+        if(i.second % exponent > 0){
+            p.push_back({i.first, i.second % exponent});
+        }
+    }
+    return p;
+}
+ 
+vector <pi> find_inverse(vector <pi> original){
+    int n = original.size();
+    vector<pi> inverse(n);
+    for(int i=0; i<n; i++){
+        inverse[i].first = original[i].first;
+        inverse[i].second = exponent - original[i].second;
+    }
+    return inverse;
+}
+ 
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("socdist.in", "r", stdin);
+    //freopen("socdist.out", "w", stdout);
+ 
+    int n; cin >> n >> exponent; 
+    int a[n];
+    map <vector<pi>, int> freq;
+    for(int i=0; i<n; i++){
+        cin >> a[i];
+        freq[factor(a[i])]++;
+    }
+ 
+    ll pairs = 0;
+    for(int i=0; i<n; i++){
+        if(factor(a[i]) == find_inverse(factor(a[i]))){
+            pairs += (freq[factor(a[i])] - 1);
+        }else{
+            pairs += freq[find_inverse(factor(a[i]))];
+        }
+    }
+    cout << pairs/2;
+    return 0;   
+} 
