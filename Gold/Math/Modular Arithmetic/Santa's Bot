@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+constexpr int MOD = 998244353;
+
+ll pow_mod(ll b, ll p, ll m){
+    b %= m;
+    ll res = 1;
+    while(p > 0){
+        if(p & 1) res = res * b % m;
+        b = b * b % m;
+        p /= 2;
+    }
+    return res;
+}
+
+ll mod_inv(ll b){ return pow_mod(b, MOD-2, MOD); }
+
+ll frac_total(ll a, ll b){
+    return ((a%MOD) * mod_inv(b)) % MOD; 
+}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("socdist.in", "r", stdin);
+    //freopen("socdist.out", "w", stdout);
+
+    int n; cin >> n;
+    vector <vector<int>> v(n);
+    map <int,int> mp;
+    for(int i=0; i<n; i++){
+        int k; cin >> k;
+        for(int j=0; j<k; j++){
+            int x; cin >> x;
+            v[i].push_back(x);
+            mp[x]++;
+        }
+    }
+
+    ll prob = 0;
+    for(const vector<int> &c: v){
+        for(const int &i: c){
+            int num = 1 * 1 * mp[i];
+            ll denom = n * (ll) c.size() * n;
+            prob = (prob + frac_total(num, denom)) % MOD;
+        } 
+    }
+    cout << prob; 
+    return 0;
+} 
