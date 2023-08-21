@@ -1,0 +1,37 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+const int MOD = 1e9+7;
+
+ll fact(ll n){
+    ll ans = 1;
+    for(ll i=1; i<=n; i++){
+        ans =  ans * i % MOD;
+    }
+    return ans;
+}
+
+ll exp(ll b, ll p){
+    ll m = MOD;
+    b %= m;
+    ll res = 1;
+    while(p > 0){
+        if(p & 1) res = res * b % m;
+        b = b*b % m;
+        p /= 2;
+    } 
+    return res;
+}
+
+int main() {
+    //ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("socdist.in", "r", stdin);
+    //freopen("socdist.out", "w", stdout);
+    
+    ll n, m; cin >> n >> m;
+    ll num = n+m-1, denom = m;
+    cout << (fact(num) * exp(fact(denom), MOD-2) % MOD) * exp(fact(num - denom), MOD-2) % MOD;
+
+    return 0;
+} 
