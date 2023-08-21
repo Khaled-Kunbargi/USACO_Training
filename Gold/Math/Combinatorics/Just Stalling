@@ -1,0 +1,32 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("socdist.in", "r", stdin);
+    //freopen("socdist.out", "w", stdout);
+
+    int n; cin >> n;
+    vector <int> a(n), b(n);
+    for(int i=0; i<n; i++) cin >> a[i];
+    for(int i=0; i<n; i++) cin >> b[i];
+    
+    sort(a.begin(), a.end(), greater<int>());
+    sort(b.begin(), b.end(), greater<int>());
+
+    vector <int> v(n);
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            if(b[j] >= a[i]) v[i]++;
+        }
+    }
+
+    ll p = 1;
+    for(int i=0; i<n; i++){
+        p *= (v[i] - i);
+    }
+    cout << p;
+    return 0;
+} 
