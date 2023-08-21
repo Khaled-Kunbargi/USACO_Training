@@ -1,0 +1,36 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+//Although we can make the solution better using the bitset.
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("socdist.in", "r", stdin);
+    //freopen("socdist.out", "w", stdout);
+
+    int n, W=0; cin >> n;
+    vector <int> a(n+1);
+    for(int i=1; i<=n; i++){ 
+        cin >> a[i];
+        W += a[i];
+    }
+
+    vector <vector<bool>> dp(n+1, vector<bool>(W+1));
+
+    dp[0][0] = 1;
+    for(int k=1; k<=n; k++){
+        for(int x=0; x<=W; x++){
+            if(x - a[k] >= 0)
+                dp[k][x] = dp[k][x] || dp[k-1][x-a[k]]; 
+            dp[k][x] = dp[k][x] || dp[k-1][x];
+        }
+    }  
+    vector <int> ans;
+    for(int i=1; i<=W; i++){
+        if(dp[n][i]) ans.push_back(i);
+    }
+    cout << ans.size() << "\n";
+    for(auto i: ans) cout << i << ' ';
+    return 0;
+} 
