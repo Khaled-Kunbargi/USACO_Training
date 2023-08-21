@@ -1,0 +1,42 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+const int MOD = 1e9+7, maxn = 1e6;
+ll fact[maxn+1];
+
+ll exp(ll b, ll p){
+    ll m = MOD;
+    b %= m;
+    ll res = 1;
+    while(p > 0){
+        if(p & 1) res = res * b % m;
+        b = b*b % m;
+        p /= 2;
+    } 
+    return res;
+}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("socdist.in", "r", stdin);
+    //freopen("socdist.out", "w", stdout);
+    fact[0] = 1;
+    for(int i=1; i<=maxn; i++){
+        fact[i] = fact[i-1] * i % MOD;
+    }
+    string s; cin >> s;
+    int freq[26] = {0};
+
+    for(char c: s){
+        freq[c - 'a']++;
+    }
+    
+    ll num = fact[s.size()];
+    ll denom = 1;
+    for(int i=0; i<26; i++){
+        denom = denom * fact[freq[i]] % MOD;
+    }
+    cout << num * exp(denom, MOD-2) % MOD ;
+    return 0;   
+} 
