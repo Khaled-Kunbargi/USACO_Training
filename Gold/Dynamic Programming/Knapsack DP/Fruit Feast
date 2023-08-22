@@ -1,0 +1,78 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+const int MOD = 1e9+7;
+
+bool dp[2][5000001];
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("feast.in", "r", stdin);
+    freopen("feast.out", "w", stdout);
+
+    int t, a, b; cin >> t >> a >> b;
+    dp[0][0] = true;
+    for(int i=0; i<=t; i++){
+        if(i-a >= 0) dp[0][i] |= dp[0][i-a];
+        if(i-b >= 0) dp[0][i] |= dp[0][i-b];
+        dp[1][i/2] |= dp[0][i];
+    }
+
+    for(int i=0; i<=t; i++){
+        if(i - a >= 0) dp[1][i] |= dp[1][i-a];
+        if(i - b >= 0) dp[1][i] |= dp[1][i-b];
+    }
+
+    for(int i=t; i>=0; i--){
+        if(dp[1][i]){cout << i; break;}
+    }
+
+    return 0;
+} 
+
+//Alternative BFS solution...
+/*#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+const int MOD = 1e9+7;
+
+int main() {
+    //ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("feast.in", "r", stdin);
+    //freopen("feast.out", "w", stdout);
+
+
+    int t, a, b; cin >> t >> a >> b;
+    set <pair<int,bool>> vis;
+    queue <pair<int,bool>> todo;
+
+    vis.insert({0, 0});
+    todo.push({0, 0});
+    while(!todo.empty()){
+        auto [fullness, drank_water] = todo.front(); todo.pop();
+
+        //cout << fullness << ' ' << drank_water << "\n";
+
+        if(!drank_water && !vis.count({fullness/2, true})){
+            vis.insert({fullness/2, true});
+            todo.push({fullness/2, true});
+        }
+
+        for(int fruit: vector<int>{a, b}){
+            int amt = fruit + fullness;
+            if(amt <= t && !vis.count({amt, drank_water})){
+                vis.insert({amt, drank_water});
+                todo.push({amt, drank_water});
+            }
+        }
+    }
+
+    int best = 0;
+    for(const auto &i: vis){ 
+        best = max(best, i.first);
+    }
+    cout << best;
+    return 0;
+} */
