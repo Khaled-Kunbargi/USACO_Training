@@ -1,0 +1,46 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+struct cord {
+    int x, y; 
+};
+
+ll dist(cord a, cord b){
+    int x = a.x - b.x;
+    int y = a.y - b.y;
+    return x*x + y*y;
+}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("checklist.in", "r", stdin);
+    freopen("checklist.out", "w", stdout);
+    int nh, ng; cin >> nh >> ng;
+    vector <cord> h(nh), g(ng);
+
+    for(int i=0; i<nh; i++) cin >> h[i].x >> h[i].y;
+    for(int i=0; i<ng; i++) cin >> g[i].x >> g[i].y;
+
+    vector <vector<vector<ll>>> dp(nh+1, vector<vector<ll>> (ng+1, vector<ll> (2, 1e18)));
+
+    dp[1][0][0] = 0;
+    for(int i=1; i<=nh; i++){
+        for(int j=0; j<=ng; j++){
+            if(i > 1){
+                dp[i][j][0] = min(dp[i][j][0], dp[i-1][j][0] + dist(h[i-1], h[i-2]));
+            }
+            if(j > 1){
+                dp[i][j][1] = min(dp[i][j][1], dp[i][j-1][1] + dist(g[j-1], g[j-2]));
+            }
+
+            if(i > 0 && j > 0){
+                dp[i][j][1] = min(dp[i][j][1], dp[i][j-1][0] + dist(h[i-1], g[j-1]));
+                dp[i][j][0] = min(dp[i][j][0], dp[i-1][j][1] + dist(h[i-1], g[j-1]));
+            }
+        }
+    }
+    cout << dp[nh][ng][0];
+
+    return 0;
+} 
