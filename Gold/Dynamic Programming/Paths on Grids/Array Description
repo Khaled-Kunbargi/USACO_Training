@@ -2,6 +2,8 @@
 using namespace std;
 typedef long long ll; 
 
+//If we tried to use Combinatorics with some greedy approach. We'll gonna need Inclusion Exclusion.
+
 const int MOD = 1e9+7;
 int dp[100000][101];
 
