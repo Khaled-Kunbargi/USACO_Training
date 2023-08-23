@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+struct cord {
+    int x, y; 
+};
+
+int dist(cord a, cord b){
+    int x = a.x - b.x;
+    int y = a.y - b.y;
+    return x*x + y*y;
+}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("radio.in", "r", stdin);
+    freopen("radio.out", "w", stdout);
+
+    int n, m; cin >> n >> m;
+    vector <cord> fl, bl;
+    int a, b; cin >> a >> b;
+    fl.push_back({a, b});
+    cin >> a >> b;
+    bl.push_back({a, b});
+
+    string s, t; cin >> s >> t;
+    for(int i=0; i<n; i++){
+        auto lt = fl.back();
+        char c = s[i];
+        if(c == 'N') fl.push_back({lt.x, lt.y+1});
+        if(c == 'W') fl.push_back({lt.x-1, lt.y});
+        if(c == 'E') fl.push_back({lt.x+1, lt.y});
+        if(c == 'S') fl.push_back({lt.x, lt.y-1});
+    }
+    for(int i=0; i<m; i++){
+        char c = t[i];
+        auto lt = bl.back();
+        if(c == 'N') bl.push_back({lt.x, lt.y+1});
+        if(c == 'W') bl.push_back({lt.x-1, lt.y});
+        if(c == 'E') bl.push_back({lt.x+1, lt.y});
+        if(c == 'S') bl.push_back({lt.x, lt.y-1});
+    }
+
+    vector<vector<int>> dp(n+1, vector<int> (m+1, INT_MAX));
+    //If we used pull dp then we would need some excpetions about i and j to do i-1 or j-1.
+
+    dp[0][0] = 0;
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+            dp[i+1][j] = min(dp[i+1][j], dp[i][j] + dist(fl[i+1], bl[j]));
+            dp[i][j+1] = min(dp[i][j+1], dp[i][j] + dist(fl[i], bl[j+1]));
+            dp[i+1][j+1] = min(dp[i+1][j+1], dp[i][j] + dist(fl[i+1], bl[j+1]));
+        }
+    }
+    cout << dp[n][m];
+
+    return 0;
+} 
