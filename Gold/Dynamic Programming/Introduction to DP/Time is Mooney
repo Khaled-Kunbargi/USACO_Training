@@ -1,0 +1,40 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+const int mxDays = 1000;
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("time.in", "r", stdin);
+    freopen("time.out", "w", stdout);
+
+    int n, m, c; cin >> n >> m >> c;
+    int earn[n];
+    for(int i=0; i<n; i++) cin >> earn[i];
+
+    vector <vector <int>> adj(n);
+
+    for(int i=0; i<m; i++){
+        int a, b; cin >> a >> b;
+        adj[--a].push_back(--b);
+    }
+
+    vector<vector<int>> dp(mxDays+1, vector<int>(n, -1));
+
+    dp[0][0] = 0;
+    int ans = 0;
+    for(int d=0; d < mxDays; d++){
+        for(int i=0; i<n; i++){
+            if(dp[d][i] != -1){
+                //cout << d << ' ' << i << "\n";
+                for(int u: adj[i]){
+                    dp[d+1][u] = max(dp[d+1][u], dp[d][i] + earn[u]);
+                }
+            }
+        }
+        ans = max(ans, dp[d][0] - c * d * d);
+    }
+    cout << ans;
+    return 0;
+} 
