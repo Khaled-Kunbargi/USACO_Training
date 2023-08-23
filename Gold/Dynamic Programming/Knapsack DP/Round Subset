@@ -1,0 +1,60 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+int dp[2][201][201*26];
+
+int get(ll x, ll f){
+    int ret = 0;
+    while(x % f == 0){
+        x /= f;
+        ret++;
+    }
+    return ret;
+}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("snakes.in", "r", stdin);
+    //freopen("snakes.out", "w", stdout);
+
+    int n, k; cin >> n >> k;
+    ll a[n];
+    for(int i=0; i<n; i++) cin >> a[i];
+
+    for(int i=0; i<=k; i++){
+        for(int j=0; j<= 200*26; j++){
+            dp[1][i][j] = dp[0][i][j] = -1;
+        }
+    }
+
+    dp[0][0][0] = 0;
+    //dp[i][j][k] : maximum sum of power of 2 using the j elements with sum of five powers of k.
+    //i is still unknown.
+    for(int i=0; i<n; i++){
+        int n2 = get(a[i], 2);
+        int n5 = get(a[i], 5);
+
+        for(int j=0; j<k; j++){
+            for(int m=0; m <= 200*26; m++){
+                if(dp[0][j][m] == -1) continue;
+                dp[1][j+1][m+n5] = max(dp[1][j+1][m+n5], dp[0][j][m] + n2);
+            }
+        }
+
+        for(int j=0; j<k; j++){
+            for(int m=0; m<= 200*26; m++){
+                if(dp[1][j][m] == -1) continue;
+                dp[0][j][m] = dp[1][j][m];
+            }
+        }
+    }
+
+    int ans = 0;
+    for(int m=0; m<=200*26; m++){
+        if(dp[1][k][m] == -1) continue;
+        ans = max(ans, min(m, dp[1][k][m]));
+    }
+    cout << ans;
+    return 0;
+}  
