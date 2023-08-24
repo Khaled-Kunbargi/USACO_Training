@@ -1,0 +1,76 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+const int MOD = 1e9+7;
+
+ll exp(ll b, ll p){
+    ll m = MOD;
+    b %= m;
+    ll res = 1;
+    while(p > 0){
+        if(p & 1) res = res * b % m;
+        b = b*b%m;
+        p /= 2;
+    }
+    return res;
+}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("poetry.in", "r", stdin);
+    freopen("poetry.out", "w", stdout);
+
+    int n, m, k; cin >> n >> m >> k;
+    vector <vector <int>> type(n+1);
+    vector <int> p(k+1);
+
+    for(int i=0; i<n; i++){
+        int a, b; cin >> a >> b;
+        p[a]++;
+        type[b].push_back(a);
+    }
+
+    vector <char> scheme(m);
+    for(int i=0; i<m; i++) cin >> scheme[i];
+    
+    vector <ll> dp(k+1); //dp[i] = Number of ways we can construct a sum of length i.
+    dp[0] = 1;
+    for(int i=1; i<=k; i++){
+        for(int j=1; j<=i; j++){
+            dp[i] = (dp[i] + dp[i-j] * p[j]) % MOD;
+        }
+    }
+
+    vector <ll> f(n+1); //Number of ways we can have 
+    //a line that ends with class ci.
+    for(int i=1; i<=n; i++){
+        for(int j=0; j < type[i].size(); j++){
+            f[i] = (f[i] + dp[k - type[i][j]]) % MOD;
+        }
+    }
+
+    if(dp[k] == 0){
+        cout << 0; return 0;
+    }
+
+    sort(scheme.begin(), scheme.end());
+    vector <int> groups;
+    int back = 0;
+    for(int i=1; i<=m; i++){
+        if(scheme[i] != scheme[i-1]){
+            groups.push_back(i-back);
+            back = i;
+        }
+    }
+    ll ans = 1;
+    for(int i=0; i<groups.size(); i++){
+        ll cur = 0;
+        for(int j=1; j<=n; j++){
+            cur = (cur + exp(f[j], groups[i])) % MOD;
+        }
+        ans = ans * cur % MOD;
+    }
+    cout << ans;
+    return 0;
+}  
