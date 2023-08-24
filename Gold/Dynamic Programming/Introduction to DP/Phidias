@@ -1,0 +1,46 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+#define f first
+#define s second
+
+int maxn = 600;
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("snakes.in", "r", stdin);
+    //freopen("snakes.out", "w", stdout);
+
+    int w, h; cin >> w >> h;
+    int n; cin >> n;
+    vector <pair<int,int>> v(n);
+    for(int i=0; i<n; i++){
+        cin >> v[i].f >> v[i].s;
+    }
+
+    vector <vector<int>> dp(maxn+1, vector<int> (maxn));
+    //dp[i][j] = min waste space for a rectangle of size i*j.
+    for(int i=1; i<=w; i++){
+        for(int j=1; j<=h; j++){
+            dp[i][j] = i*j;
+        }
+    }
+    for(int i=0; i<n; i++){
+        dp[v[i].f][v[i].s] = 0;
+    }
+
+    for(int i=1; i <= w; i++){
+        for(int j=1; j<= h; j++){
+            for(int x=1; x <= i; x++){
+                dp[i][j] = min(dp[i][j], dp[i-x][j] + dp[x][j]);
+            }
+            
+            for(int y=1; y <= j; y++){
+                dp[i][j] = min(dp[i][j], dp[i][j-y] + dp[i][y]);
+            }
+        }
+    }
+   
+    cout << dp[w][h] ;
+    return 0;
+}  
