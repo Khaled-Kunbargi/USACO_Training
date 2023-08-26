@@ -1,0 +1,66 @@
+/* My Complete Search solution:
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+typedef vector <int> vi;
+
+int mn = 1e9;
+void f(const vector <int> &howlong, deque <int> &a){
+    vector <int> pre(howlong.size()+1);
+    for(int i=1; i<=howlong.size(); i++){
+        pre[i] = pre[i-1] + howlong[i-1];
+    }
+    int total_dist = 0;
+    while(pre.size() > 1){
+        for(int i= *pre.begin(), first =i; i < *next(pre.begin()); i++){
+            total_dist += (i-first) * a[i];
+        }
+        pre.erase(pre.begin());
+    }
+    mn = min(mn, total_dist);
+}
+
+vector <vector <int>> ans;
+void generateVectors(int N, int k, std::vector<int>& current, int index) {
+    if (N == 0 && k == 0) {
+        ans.push_back(current);
+        return;
+    }
+
+    if (N < 0 || k <= 0) {
+        return;
+    }
+
+    for (int i = 1; i <= N; ++i) {
+        current[index] = i;
+        generateVectors(N - i, k - 1, current, index + 1);
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("cbarn2.in", "r", stdin);
+    freopen("cbarn2.out", "w", stdout);
+
+    int n, k; cin >> n >> k;
+    deque <int> r(n);
+    for(int i=0; i<n; i++) cin >> r[i];
+
+
+    for(int i=0; i<n; i++){
+        if(i){
+            int first = r.front();
+            r.pop_front();
+            r.push_back(first);
+        }
+        vi t(k);
+        generateVectors(n, k, t, 0);
+        for(auto i: ans){
+            f(i, r);
+        }
+        ans.clear();
+    }  
+    cout << mn;
+    return 0;
+}  
+*/
