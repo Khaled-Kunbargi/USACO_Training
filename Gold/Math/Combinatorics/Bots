@@ -1,0 +1,38 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+const int m = 1e9 + 7, N = 1e6;
+ll fact[N], inv[N];
+
+ll exp(ll b, ll p){
+    b %= m;
+    ll res = 1;
+    while(p > 0){
+        if(p & 1) res = res * b%m;
+        b = b * b%m;
+        p /= 2;
+    }
+    return res;
+}
+
+int main() {
+    //ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("backforth.in", "r", stdin);
+    //freopen("backforth.out", "w", stdout);
+
+    int n; cin >> n; 
+    n *= 2;
+    fact[0] = inv[0] = 1;
+    for(int i=1; i<=n; i++){
+        fact[i] = fact[i-1] * i % m;
+        inv[i] = exp(fact[i], m-2);
+    }
+
+    ll ans = 1;
+    for(int i=1; i<=n; i++){
+        
+    }
+    cout << ans;
+    return 0;
+}  
