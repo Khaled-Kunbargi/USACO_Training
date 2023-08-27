@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+bool ok = 1;
+int op(int a, int b, char c){
+    if(c == '+'){
+        return a + b;
+    }
+    if(c == '-'){
+        return a - b;
+    }
+    if(c == '*'){
+        return a * b;
+    }
+    else {
+        if(b != 0 && a % b == 0)
+            return a / b;
+        else {ok = 0; return -1;}
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("backforth.in", "r", stdin);
+    //freopen("backforth.out", "w", stdout);
+
+    int n; cin >> n;
+    while(n--){
+        vector <int> a(4);
+        for(int i=0; i<4; i++) cin >> a[i];
+
+        sort(a.begin(), a.end());
+        int ans = 0;
+        vector <char> v = {'*', '+', '-', '/'};
+        do{
+            for(int i=0; i<4; i++){
+                for(int j=0; j<4; j++){
+                    for(int k=0; k<4; k++){
+                        ok = 1;
+                        int val = op(op(op(a[0], a[1], v[i]), a[2], v[j]), a[3], v[k]);
+                        if(val <= 24 && ok) ans = max(ans, val);
+                    }
+                }
+            }
+            for(int i=0; i<4; i++){
+                for(int j=0; j<4; j++){
+                    for(int k=0; k<4; k++){
+                        ok = 1;
+                        int val = op(op(a[0], a[1], v[i]), op(a[2], a[3], v[k]), v[j]);
+                        if(val <= 24 && ok) ans = max(ans, val);
+                    }
+                }
+            }
+        }while(next_permutation(a.begin(), a.end()));
+        cout << ans << '\n';
+    }
+    return 0;
+}  
