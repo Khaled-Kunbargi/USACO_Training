@@ -1,0 +1,28 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+int main() {
+    //ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("backforth.in", "r", stdin);
+    //freopen("backforth.out", "w", stdout);
+
+    int n, x; cin >> n >> x;
+    int a[n];
+    for(int i=0; i<n; i++) cin >> a[i];
+
+    vector <ll> pre(n+1);
+    for(int i=0; i<n; i++){ 
+        pre[i+1] = pre[i] + a[i];
+    }
+    
+    map <ll, int> occ;
+    ll ans=0;
+    occ[0] = x ? 1: 0;
+    for(int i=0; i<n; i++){
+        occ[pre[i+1]]++;
+        ans += occ[pre[i+1]-x];
+    }
+    cout << ans;
+    return 0;
+}  
