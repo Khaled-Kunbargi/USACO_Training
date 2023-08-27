@@ -21,6 +21,7 @@ int main() {
     //freopen("backforth.in", "r", stdin);
     //freopen("backforth.out", "w", stdout);
 
+    //My first brute force solution that got TLE..
     int n; cin >> n; 
     n *= 2;
     fact[0] = inv[0] = 1;
@@ -31,8 +32,34 @@ int main() {
 
     ll ans = 1;
     for(int i=1; i<=n; i++){
-        
+        ll add = 0;
+        for(int j=0; j<=i; j++){
+            if(j <= n/2 && i-j <= n/2){
+                add += fact[i] * inv[j] % m * inv[i-j]%m; 
+                add %= m;
+            }
+        }
+        ans += add;
+        ans %= m;
     }
     cout << ans;
+
+
+    //Just Idea solution:
+    int n; cin >> n; 
+    ll total_states = (exp(2, n+1)-1 + m) % m;
+    
+    ll v = exp(2, n); //number of vertices at level i.
+    ll v_with_less_than_two_c = 1; //vertices that have less than two children.
+    //Initially 2 because 2*C(N, N) = 2.
+    for(int l=n+1; l<=2*n; l++){
+        v = (2 * v - 2 * v_with_less_than_two_c) % m;
+        total_states += v;
+        total_states %= m;
+
+        v_with_less_than_two_c = v_with_less_than_two_c * l % m;
+        v_with_less_than_two_c = v_with_less_than_two_c * mod_inv(l - n) % m;
+    }   
+    cout << (total_states + m) % m;
     return 0;
 }  
