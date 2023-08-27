@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+const int m = 1e9+7;
+
+ll exp(ll b, ll p){
+    b %= m;
+    ll res = 1;
+    while(p > 0){
+        if(p & 1) res = res * b%m;
+        b = b * b%m;
+        p /= 2;
+    }
+    return res;
+}
+
+//Not completed yet.
+
+int main() {
+    //ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("backforth.in", "r", stdin);
+    //freopen("backforth.out", "w", stdout);
+
+    int k; cin >> k;
+    string s; cin >> s;
+
+    map <char, int> mp;
+    for(char c: s){
+        mp[c]++;   
+    }
+
+    set <int> pos;
+    for(char c='a'; c<='z'; c++){
+        if(s.find(c) != -1)
+            pos.insert(s.size() - mp[c] + 1);
+    }
+    ll sum = 0;
+    for(auto i: pos) sum += i;
+
+    ll ans = 1, p = s.size() + 1;
+    for(int i=0; i<k; i++, p++){
+        int x = max(26 - i - (int) pos.size(), 0);
+        ll val = x * p + sum + (i ? p-1: 0);
+        ans = ans * val % m;
+        sum += pos.size();
+    }
+    cout << ans;
+
+    return 0;
+}  
