@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+const int FLAVORS = 5;
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("cowpatibility.in", "r", stdin);
+    //freopen("cowpatibility.out", "w", stdout);
+    int n; cin >> n;
+
+    vector <array <int,FLAVORS>> cows(n);
+    vector <map<array <int, FLAVORS>, int>> common(FLAVORS);
+
+
+    for(int i=0; i<n; i++){
+        for(int j=0; j<5; j++) cin >> cows[i][j];
+        sort(cows[i].begin(), cows[i].end());
+    }
+
+    for(int i=0; i<n; i++){
+        common[4][cows[i]]++;
+        for(int a=0; a<FLAVORS; a++){
+            common[0][{cows[i][a]}]++;
+            for(int b=a+1; b<FLAVORS; b++){
+                common[1][{cows[i][a], cows[i][b]}]++;
+                for(int c=b+1; c<FLAVORS; c++){
+                    common[2][{cows[i][a], cows[i][b], cows[i][c]}]++;
+                    for(int d=c+1; d<FLAVORS; d++){
+                        common[3][{cows[i][a], cows[i][b], cows[i][c], cows[i][d]}]++;
+                    }
+                }
+            }
+        }
+    }
+
+    ll compatible = 0;
+    for(int i=0; i<FLAVORS; i++){
+        for(auto &[v, n]: common[i]){
+            if(i % 2 == 0){
+                compatible += (ll) n * (n-1)/2;
+            }else{
+                compatible -= (ll) n * (n-1)/2;
+            }   
+        }
+    }
+    cout << (ll) n * (n-1)/2 - compatible;
+
+    return 0;
+}  
