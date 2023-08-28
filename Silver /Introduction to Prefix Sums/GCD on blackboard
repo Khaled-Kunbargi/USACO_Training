@@ -1,0 +1,29 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+int main() {
+    //ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("backforth.in", "r", stdin);
+    //freopen("backforth.out", "w", stdout);
+
+    int n; cin >> n;
+    int a[n];
+    for(int i=0; i<n; i++) cin >> a[i];
+
+    vector <int> pre(n+1), suff(n+1);
+    for(int i=0; i<n; i++){
+        pre[i+1] = gcd(pre[i], a[i]);
+    }
+    
+    for(int i=n-1; i>=0; i--){
+        suff[i] = gcd(suff[i+1], a[i]);
+    }
+
+    int ans = 0;
+    for(int i=0; i<n; i++){
+        ans = max(ans, gcd(suff[i+1], pre[i]));
+    }
+    cout << ans;
+    return 0;
+}  
