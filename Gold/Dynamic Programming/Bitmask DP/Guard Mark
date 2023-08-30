@@ -1,0 +1,48 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("guard.in", "r", stdin);
+    freopen("guard.out", "w", stdout);
+
+    int n, H; cin >> n >> H;
+    int h[n], w[n], s[n];
+    for(int i=0; i < n; i++){
+        cin >> h[i] >> w[i] >> s[i];
+    }
+
+    vector <pair <int,int>> dp(1 << n, {0, 0});
+    for(int c=0; c<n; c++){
+        dp[1 << c] = {h[c], s[c]};
+    }
+    for(int S=2; S < 1 << n; S++){
+        for(int c=0; c < n; c++){
+            if(S & (1 << c)){
+                auto option = dp[1 << c];
+                int without = S ^ (1 << c);
+                int height = dp[without].first;
+                int strength = dp[without].second;
+                dp[S] = max(dp[S],  dp[without]);
+                if(strength >= w[c]){
+                    //cout << dp[S].first << ' ' << dp[S].second  << "\n";
+                    dp[S] = max(dp[S], make_pair(h[c] + height, min(strength - w[c], s[c])));
+                    //cout << dp[S].first << ' ' << dp[S].second  << "\n";
+                }
+            }
+        }
+    }
+    bool taller = 0;
+    int ans = 0;
+    for(int S=0; S < 1 << n; S++){
+        if(dp[S].first >= H){
+            ans = max(ans, dp[S].second);
+            taller = 1;
+        }
+    }
+    if(taller) cout << ans;
+    else cout << "Mark is too tall";
+
+    return 0;
+}  
