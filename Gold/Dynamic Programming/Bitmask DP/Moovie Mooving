@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define f first
+#define s second
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("movie.in", "r", stdin);
+    freopen("movie.out", "w", stdout);
+
+    int n, l; cin >> n >> l;
+    int d[n];
+    vector <set <int>> v(n);
+    for(int i=0; i<n; i++){
+        cin >> d[i];
+        int m;
+        cin >> m;
+        for(int j=0; j<m; j++){
+            int x; cin >> x;
+            v[i].insert(x);
+        }
+    }
+
+    vector <pi> dp(1 << n, {0, 1});
+    dp[0] = {0, 0};
+    for(int i=0; i<n; i++){
+        if(*v[i].begin() == 0){
+            dp[1 << i] = {d[i],1};
+        }
+    }
+    for(int S=2; S < 1 << n; S++){
+        for(int x=0; x < n; x++){
+            if(S & (1 << x)){
+                int without = S ^ (1 << x);
+                int max_point_reached = dp[without].f;
+                auto j = v[x].upper_bound(max_point_reached);
+                if(j == v[x].begin()) continue;
+
+                if(*prev(j) + d[x] < max_point_reached) continue;
+                if(d[x] + *prev(j) > dp[S].f){
+                    dp[S].f = d[x] + *prev(j);
+                    dp[S].s = dp[without].s + 1;
+                }
+            }
+        }
+    }
+    int ans = n+1;
+    for(int S=0; S < 1 << n; S++){
+        if(dp[S].f >= l){
+            ans = min(ans, dp[S].s);
+        }
+    }
+    if(ans == n+1) cout << -1;
+    else cout << ans;
+    return 0;
+}  
