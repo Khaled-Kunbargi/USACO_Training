@@ -1,0 +1,55 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define f first
+#define s second
+
+ll dist[40000][3];
+
+void bfs(int start, int i, vector<vi> &adj){
+    queue <int> q;
+    q.push(start);
+    while(!q.empty()){
+        //cout << dist[0][0] << "\n";
+        int cur= q.front(); 
+        q.pop();
+        for(int x: adj[cur]){
+            if(dist[x][i] != 0) continue;
+            dist[x][i] = dist[cur][i] + 1;
+            q.push(x);
+        }
+    }
+    dist[start][i] = 0;
+}
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("piggyback.in", "r", stdin);
+    freopen("piggyback.out", "w", stdout);
+
+    ll b, e, p, n, m; cin >> b >> e >> p >> n >> m;
+
+    vector <vi> adj(n);
+    for(int i=0; i<m; i++){
+        int a, b; cin >> a >> b;
+        adj[--a].push_back(--b);
+        adj[b].push_back(a);
+    }
+
+    bfs(0, 0, adj);
+    bfs(1, 1, adj);
+    bfs(n-1, 2, adj);
+
+    /*for(int i=0; i<n; i++){
+        cout << i << "\n";
+        cout << dist[i][0] << ' ' << dist[i][1] << " " << dist[i][2] << "\n";
+    }*/
+    ll ans = dist[n-1][0] * b + dist[n-1][1] * e;
+    //ll ans = INT_MAX;
+    for(int i=0; i<n; i++){
+        ans = min(ans, dist[i][0] * b + dist[i][1] * e + dist[i][2]*p);
+    }
+    cout << ans;
+    return 0;
+}   
