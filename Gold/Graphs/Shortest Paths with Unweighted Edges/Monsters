@@ -1,0 +1,95 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define f first
+#define s second
+#define OO INT_MAX
+
+int dx[4]{1, -1, 0, 0}, dy[4]{0, 0, 1, -1};
+string grid[1000];
+int depth[1000][1000];
+char pa[1000][1000];
+queue <pi> q;
+int n, m, found = 0;
+pi target;
+
+bool inside(int x, int y){
+    return x >= 0 && y >= 0 && x < n && y < m && grid[x][y] != '#';
+}
+
+bool player = 0;
+void bfs(){
+    while(!q.empty()){
+        int u = q.front().f, v = q.front().s; q.pop();
+        if(player && (u == n-1 || v == m-1 || u == 0 || v == 0)){
+            found = 1;
+            target.f = u, target.s = v;
+            return;
+        }
+        for(int i=0; i<4; i++){
+            int x = u + dx[i], y = v + dy[i];
+            if(!inside(x, y) || depth[x][y] <= depth[u][v]+1) continue;
+
+            depth[x][y] = depth[u][v] + 1;
+            if(dx[i] == -1)
+                pa[x][y] = 'U';
+            else if(dx[i] == 1)
+                pa[x][y] = 'D';
+            else if(dy[i] == -1)
+                pa[x][y] = 'L';
+            else if(dy[i] == 1)
+                pa[x][y] = 'R';
+            q.push({x, y});
+        }
+    }
+}
+int main() {
+    //ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("guard.in", "r", stdin);
+    //freopen("guard.out", "w", stdout);
+
+    cin >> n >> m;
+    for(int i=0; i<n; i++){
+        cin >> grid[i];
+    }
+    pi start;
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+            depth[i][j] = OO;
+            if(grid[i][j] == 'A') start = {i, j};
+            if(grid[i][j] == 'M'){ 
+                depth[i][j] = 0;
+                q.push({i, j});
+            }
+        } 
+    }
+
+    bfs();
+    player = 1;
+    depth[start.f][start.s] = 0;
+    q.push(start);
+    bfs();
+    if(found){ 
+        cout << "YES\n";
+        int u, v;
+        char x = pa[u = target.f][v = target.s];
+        vector <char> path;
+        while(u != start.f || v != start.s){
+            path.push_back(x);
+            if(x == 'U')
+                x = pa[++u][v];
+            else if(x == 'D')
+                x = pa[--u][v];
+            else if(x == 'L')
+                x = pa[u][++v];
+            else if(x == 'R')
+                x = pa[u][--v];
+        }
+        reverse(path.begin(), path.end());
+        cout << path.size() << "\n";
+        for(auto i: path) cout << i;
+    }else cout << "NO\n";
+    return 0;
+}
