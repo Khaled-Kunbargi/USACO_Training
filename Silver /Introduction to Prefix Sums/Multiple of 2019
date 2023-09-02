@@ -1,0 +1,38 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+//#define s second
+#define OO INT_MAX
+
+const int m = 2019;
+
+int main() {
+    //ios::sync_with_stdio(0); cin.tie(0);
+    //freopen("pails.in", "r", stdin);
+    //freopen("pails.out", "w", stdout);
+
+    string s; cin >> s;
+    int n = s.size();
+    vector <ll> suff(n);
+    ll p = 10;
+    map <int,int> mp;
+    suff[n-1] = (s[n-1]-'0');
+    mp[suff[n-1]]++;
+    mp[0]++;
+    for(int i=n-2; i >= 0; i--){
+        suff[i] = (suff[i+1] + (s[i] - '0') * p) % m;
+        p = p * 10 % m;
+        mp[suff[i]]++;
+    }
+    ll ans = 0;
+    for(auto i: mp){
+        ans += i.second * (i.second-1)/2;
+    }
+    cout << ans;
+
+    return 0;
+}
