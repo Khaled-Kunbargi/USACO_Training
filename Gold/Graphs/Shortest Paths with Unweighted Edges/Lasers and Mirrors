@@ -1,5 +1,5 @@
-
-//Code with TLE
+//Code with TLE because we always check all x and y neighbours.
+//Modified...
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll; 
@@ -8,7 +8,6 @@ typedef pair <int,int> pi;
 #define pb push_back
 #define f first
 #define s second
-#define OO INT_MAX
 #define all(x) (x).begin(), (x).end()
 
 vector <vi> mpx, mpy;
@@ -21,22 +20,27 @@ int gci(int x, bool j=0){ //get compressed index.
 
 int n;
 void bfs(vector <pi> &mirrors){
-    queue <int> q;
+    queue <pi> q;
     dist[0] = 0;
-    q.push(0);
+    q.push({0, 1});
+    q.push({0, 0});
     while(!q.empty()){
-        int cur = q.front(); q.pop();
+        int cur = q.front().f, beamdir = q.front().s; q.pop();
         if(cur == 1) return;
-        for(int x: mpx[gci(mirrors[cur].f)]){
-            if(dist[x] != -1) continue;
-            dist[x] = dist[cur] + 1;
-            q.push(x);
-        }
-
-        for(int y: mpy[gci(mirrors[cur].s, 1)]){
-            if(dist[y] != -1) continue;
-            dist[y] = dist[cur] + 1;
-            q.push(y);
+        int dir = 1 - beamdir;
+        
+        if(!dir){
+            for(int x: mpx[gci(mirrors[cur].f)]){
+                if(dist[x] != -1) continue;
+                dist[x] = dist[cur] + 1;
+                q.push({x, dir});
+            }
+        }else{
+            for(int y: mpy[gci(mirrors[cur].s, 1)]){
+                if(dist[y] != -1) continue;
+                dist[y] = dist[cur] + 1;
+                q.push({y, dir});
+            }
         }
     }
 }
@@ -72,3 +76,58 @@ int main() {
     cout << dist[1]-1;
     return 0;
 }
+
+//Another correct solution..
+/*
+#include <bits/stdc++.h>
+using namespace std;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+
+unordered_map <int, vi> lines[2];
+vi dist;
+
+int n;
+void bfs(vector <pi> &mirrors){ 
+    queue <pi> q;
+    dist[0] = 0;
+    q.push({0, 0});
+    q.push({0, 1});
+    while(!q.empty()){ 
+        int cur = q.front().f, beamdir = q.front().s; 
+        q.pop();
+        if(cur == 1) return;
+        int dir = 1 - beamdir;
+        int cor = dir ?  mirrors[cur].s :  mirrors[cur].f;
+        for(int x: lines[dir][cor]){
+            if(dist[x] != -1) continue;
+            dist[x] = dist[cur] + 1;
+            q.push({x, dir});
+        }
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("lasers.in", "r", stdin);
+    freopen("lasers.out", "w", stdout);
+    cin >> n;
+    n += 2;
+    vector <pi> mirrors(n);
+    for(int i=0; i<n; i++){
+        int x, y; cin >> x >> y;
+        mirrors[i] = {x, y};
+        lines[0][x].pb(i);
+        lines[1][y].pb(i);
+    }
+
+    dist.assign(n, -1);
+    bfs(mirrors);
+
+    cout << (dist[1] == -1 ? -1 : dist[1] - 1);
+    return 0;
+}
+*/
