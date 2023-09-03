@@ -1,0 +1,74 @@
+
+//Code with TLE
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll; 
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+
+vector <vi> mpx, mpy;
+vi dist, X, Y;
+
+int gci(int x, bool j=0){ //get compressed index.
+    if(!j) return lower_bound(X.begin(), X.end(), x) - X.begin();
+    return lower_bound(Y.begin(), Y.end(), x) - Y.begin();
+}
+
+int n;
+void bfs(vector <pi> &mirrors){
+    queue <int> q;
+    dist[0] = 0;
+    q.push(0);
+    while(!q.empty()){
+        int cur = q.front(); q.pop();
+        if(cur == 1) return;
+        for(int x: mpx[gci(mirrors[cur].f)]){
+            if(dist[x] != -1) continue;
+            dist[x] = dist[cur] + 1;
+            q.push(x);
+        }
+
+        for(int y: mpy[gci(mirrors[cur].s, 1)]){
+            if(dist[y] != -1) continue;
+            dist[y] = dist[cur] + 1;
+            q.push(y);
+        }
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("lasers.in", "r", stdin);
+    freopen("lasers.out", "w", stdout);
+    cin >> n;
+    n += 2;
+    vector <pi> mirrors(n);
+    for(int i=0; i<n; i++){
+        int x, y; cin >> x >> y;
+        mirrors[i] = {x, y};
+        X.pb(x); Y.pb(y);
+    }
+
+    sort(all(X)); X.erase(unique(all(X)), X.end());
+    sort(all(Y)); Y.erase(unique(all(Y)), Y.end());
+    mpx.resize(X.size());
+    mpy.resize(Y.size());
+
+    for(int i=0; i<n; i++){ 
+        mpx[gci(mirrors[i].f)].pb(i);
+    }
+    for(int i=0; i<n; i++){ 
+        mpy[gci(mirrors[i].s, 1)].pb(i);
+    }
+
+    dist.assign(n, -1);
+    bfs(mirrors);
+
+    cout << dist[1]-1;
+    return 0;
+}
