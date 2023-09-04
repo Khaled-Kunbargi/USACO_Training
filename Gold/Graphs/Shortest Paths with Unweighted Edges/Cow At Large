@@ -1,0 +1,52 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+int ans = 0;
+vector <vi> dist;
+
+void bfs(int start, vector<vi> &adj, bool id){
+    queue <int> q;
+    q.push(start);
+    dist[start][id] = 0;
+    while(!q.empty()){
+        int cur = q.front(); q.pop();
+        for(int x: adj[cur]){
+            if(dist[cur][id]+1  < dist[x][id]){
+                if(id && dist[cur][id]+1 >= dist[x][0]) continue;
+                dist[x][id] = dist[cur][id] + 1;
+                q.push(x);
+            }
+        }
+        if(adj[cur].size() == 1 && id && dist[cur][1] < dist[cur][0]){
+            ans++;
+            //cout << "h " << cur << "\n";
+            bfs(cur, adj, 0);
+        }
+    }
+}
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("atlarge.in", "r", stdin);
+    freopen("atlarge.out", "w", stdout);
+    int n,k; cin >> n >> k; k--;
+    vector <vi> adj(n);
+    dist.assign(n, vi (2, OO));
+    for(int i=0; i<n-1; i++){
+        int a, b; cin >> a >> b;
+        adj[--a].pb(--b);
+        adj[b].pb(a);
+    }
+
+    bfs(k, adj, 1);
+
+    cout << ans;
+    return 0;
+}
