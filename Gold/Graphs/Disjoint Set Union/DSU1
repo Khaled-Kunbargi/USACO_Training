@@ -1,0 +1,42 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+ 
+struct DSU {
+    vi p;
+    int n;
+    void init(int n){ this->n = n; p.resize(n+1); for(int i=1; i<=n; i++) p[i] = i;}
+ 
+    int get(int a){ return p[a] = (p[a] == a ? a: get(p[a])); }
+ 
+    bool same_set(int a, int b){return get(a) == get(b);}
+ 
+    void unite(int a, int b){
+        a = get(a);
+        b = get(b);
+        p[a] = b;
+    }
+};
+int main() {
+     ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("atlarge.in", "r", stdin);
+    // freopen("atlarge.out", "w", stdout);
+    int n, m; cin >> n >> m;
+    DSU dsu;
+    dsu.init(n);
+    for(int i=0; i<m; i++){
+        string type; cin >> type;
+        int a, b; cin >> a >> b;
+        if(type == "union"){ dsu.unite(a, b); continue; }
+        if(dsu.same_set(a, b)) cout << "YES\n";
+        else cout << "NO\n";
+    }
+    return 0;
+}
