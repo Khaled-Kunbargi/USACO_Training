@@ -1,0 +1,75 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+struct DSU {
+    unordered_map <int,int> p, r;
+    int n, c;
+    void init(int n){ this->n = n; 
+        c = 0;
+        for(int i=0; i<n; i++) p[i] = i;
+    }
+    void create(int x){
+        p[x] = x;
+        c++;
+    }
+
+    int get(int a){ return (p[a] == a ? a: get(p[a])); }
+
+    bool same_set(int a, int b){return get(a) == get(b);}
+
+    void unite(int a, int b){
+        a = get(a), b = get(b);
+        if(a == b) return;
+        if(r[a] == r[b])
+            r[a]++;
+        if(r[b] > r[a]) swap(a, b);
+        p[b] = a;           
+        //cout << "h\n";
+        c--;
+    }
+} dsu;
+
+int main() {
+     ios::sync_with_stdio(0); cin.tie(0);
+     freopen("closing.in", "r", stdin);
+     freopen("closing.out", "w", stdout);
+
+    int n, m; cin >> n >> m;
+    vector <vi> adj(n);
+    for(int i=0; i<m; i++){
+        int a, b; cin >> a >> b;
+        adj[--a].pb(--b);
+        adj[b].pb(a);
+    }
+    vi vis(n), ans, v(n);
+    for(int i=0; i<n; i++) cin >> v[i];
+    reverse(all(v));
+    for(auto x: v){
+        x--;
+        vis[x] = 1;
+        dsu.create(x);
+        for(auto j: adj[x]){
+            if(vis[j]){ 
+                //cout << x << ' ' << j << "\n";
+                dsu.unite(x, j);
+            }
+        }
+        //cout << dsu.c << "\n";
+        if(dsu.c == 1) ans.pb(1);
+        else ans.pb(0);
+    }
+    reverse(all(ans));
+    for(auto i: ans) {
+        if(i) cout << "YES\n";
+        else cout << "NO\n";
+    }
+    return 0;
+}
