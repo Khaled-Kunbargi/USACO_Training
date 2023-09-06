@@ -1,0 +1,73 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+struct DSU {
+    vi p, r, sz; 
+    int n, c;
+    void init(int n){ this->n = n; 
+        p.resize(n); r.resize(n); sz.assign(n, 1);
+        for(int i=0; i<n; i++) p[i] = i;
+    }
+
+    int get(int a){ return p[a] = (p[a] == a ? a: get(p[a])); }
+
+    bool same_set(int a, int b){return get(a) == get(b);}
+
+    int size(int x){return sz[get(x)];}
+
+    void unite(int a, int b){
+        a = get(a), b = get(b);
+        if(a == b) return;
+        if(r[a] == r[b])
+            r[a]++;
+        if(r[b] > r[a]) swap(a, b);
+        p[b] = a;           
+        sz[a] += sz[b];
+    }
+} dsu;
+
+bool cmp(pair<ll,pi> a, pair<ll,pi> b){
+    return a.s.s > b.s.s;
+}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("mootube.in", "r", stdin);
+    freopen("mootube.out", "w", stdout);
+
+    int n, q; cin >> n >> q;
+    vector <pair<ll,pi>> edges(n-1), queries(q);    
+    for(int i=0; i<n-1; i++){
+        int u, v, w; cin >> u >> v >> w;
+        edges[i] = make_pair(w, make_pair(--u, --v));
+    }
+    for(int i=0; i<q; i++){
+        int k, v; cin >> k >> v;
+        queries[i] = make_pair(i, make_pair(--v, k));
+    }
+    sort(all(edges), greater<pair<ll,pi>>());
+    sort(all(queries), cmp);
+
+    dsu.init(n);
+    vi ans(q);
+    int idx=0;
+    for(auto qu: queries){
+        int v = qu.s.f;
+        int cur_k = qu.s.s;
+        while(idx < edges.size() && edges[idx].f >= cur_k){
+            dsu.unite(edges[idx].s.f, edges[idx].s.s);
+            idx++;
+        }
+        ans[qu.f] = dsu.size(v)-1;
+    }
+    for(auto i: ans) cout << i << "\n";
+    return 0;
+}
