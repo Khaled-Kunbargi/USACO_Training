@@ -1,0 +1,88 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+struct DSU {
+    vi p, r, sz;
+    vector <vi> comp;
+    int n, mx;
+    void init(int n){ this->n = n; 
+        p.resize(n); r.resize(n); sz.assign(n, 1); comp.resize(n);
+        iota(all(p), 0);
+        for(int i=0; i<n; i++){
+            comp[i].pb(i);
+        }
+    }
+
+    int get(int a){ return p[a] = (p[a] == a ? a: get(p[a])); }
+
+    bool same_set(int a, int b){return get(a) == get(b);}
+
+    void unite(int a, int b,vi &ans, vi &grid){
+        int intermediate = grid[a];
+        a = get(a), b = get(b);
+        if(a == b) return;
+        if(grid[b] > grid[a]) swap(a, b);
+        if(grid[a] > grid[b]){
+            for(auto &i: comp[b]){
+                ans[i] = intermediate > grid[i] ? 0: grid[i] - intermediate;
+            }
+            comp[b].clear();
+            p[b] = a;
+        }else if(grid[a] == grid[b]){
+            if(comp[b].size() > comp[a].size()) swap(a, b);
+            for(auto &i: comp[b]) comp[a].pb(i);
+            p[b] = a;
+        }
+    }
+} dsu;
+
+int main() {
+    // ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("tractor.in", "r", stdin);
+    // freopen("tractor.out", "w", stdout);
+
+    int n, m; cin >> n >> m;
+    vi ans(n*m), grid(n*m);
+
+    vector <pi> v(n*m);
+    for(int i=0; i<n*m; i++){
+        cin >> grid[i];
+        ans[i] = grid[i];
+        v[i] = {grid[i], i};
+    }
+
+    sort(all(v));
+    dsu.init(n*m);
+    while(!v.empty()){
+        pi cur = v.back(); v.pop_back();
+        int idx = cur.s;
+        if(idx % m != 0 && grid[idx-1] >= cur.f){
+            dsu.unite(idx, idx-1, ans, grid);
+        }
+        if(idx%m != m-1 && grid[idx+1] >= cur.f){
+            dsu.unite(idx, idx+1, ans, grid);
+        }
+        if(idx + m < n*m && grid[idx+m] >= cur.f){
+            dsu.unite(idx, idx+m, ans, grid);
+        }
+        if(idx-m >= 0 && grid[idx-m] >= cur.f){
+            dsu.unite(idx, idx-m, ans, grid);
+        }
+    }
+    for(int i=0; i<n*m; i++){
+        if(i % m == m-1){
+            cout << ans[i] << "\n";
+        }else{
+            cout << ans[i] << ' ';
+        }
+    }
+    return 0;
+}
