@@ -1,0 +1,35 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e18
+#define all(x) (x).begin(), (x).end()
+
+int main() {
+     ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("tractor.in", "r", stdin);
+    // freopen("tractor.out", "w", stdout);
+    int n, m, q; cin >> n >> m >> q;
+    vector <vi> dist(n, vi(n, OO));
+    for(int i=0; i<m; i++){
+        int a, b, w; cin >> a >> b >> w;
+        if(w < dist[--a][--b]) dist[b][a] = dist[a][b] = w;
+    }
+    for(int i=0; i<n; i++) dist[i][i] = 0;
+    for(int k=0; k<n; k++){
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
+            }
+        }
+    }
+    while(q--){
+        int a, b; cin >> a >> b;
+        cout << (dist[--a][--b] == OO ? -1: dist[a][b]) << "\n";
+    }
+    return 0;
+}
