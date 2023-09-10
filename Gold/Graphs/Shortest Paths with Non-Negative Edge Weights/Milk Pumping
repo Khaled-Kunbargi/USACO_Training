@@ -1,0 +1,64 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e7
+#define all(x) (x).begin(), (x).end()
+
+int n;
+void dijkstra(int start, vector <vector<pi>> &adj, vi &t){
+    priority_queue <pi> pq;
+    pq.push({0, start});
+    vi d(n, OO); d[start] = 0;
+    while (!pq.empty()){
+        const auto [cur_d, v] = pq.top();  pq.pop();
+        if(d[v] < -cur_d) continue;
+        for(auto &[u, len]: adj[v]){
+            if(len + d[v] < d[u]){
+                d[u] = len + d[v];
+                pq.push({-d[u], u});
+            }
+        }
+    }
+    for(int i=0; i<d.size(); i++) t[i] = d[i];
+}
+
+struct edge {
+    int a, b, c, d;
+};
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("pump.in", "r", stdin);
+    freopen("pump.out", "w", stdout);
+    
+    int m; cin >> n >> m;
+    vector <edge> v;
+    for(int i=0; i<m; i++){
+        int a, b, c, fl; cin >> a >> b >> c >> fl;
+        v.pb({--a, --b, c, fl});
+        v.pb({b, a, c, fl});
+    }
+    /*for(auto i: v){
+        cout << i.a << " " << i.b << " " << i.c << " " << i.d << "\n";
+    }*/
+    vector <pi> d(n, {OO, OO}); //[cost, flow]
+    d[0] = {0, OO};
+    for(int i=0; i<n-1; i++){
+        for(auto &[a, b, c, fl]: v){
+            double nxt_c = d[a].f + c, nxt_fl = min(d[a].s, (ll)fl);
+            //cout << a << ' ' << b << "\n";
+            //cout << nxt_c << " " << nxt_fl << "\n";
+            if(nxt_fl / nxt_c >  (double) d[b].s / (double) d[b].f || (d[b].s == OO && d[b].f==OO)){
+                d[b] = {nxt_c, nxt_fl};
+            }
+        }
+    }
+    //for(auto i: d) cout << i.f << " " << i.s << "\n";
+    cout << floor(((double) d[n-1].s / (double) d[n-1].f) * 1000000);
+    return 0;
+}
