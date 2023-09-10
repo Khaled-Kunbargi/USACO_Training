@@ -1,0 +1,60 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+int n;
+void dijkstra(int start, vector <vector<pi>> &adj, vi &d){
+    priority_queue <pi> pq;
+    pq.push({0, start});
+    d.assign(n+1, OO); d[start] = 0;
+    while (!pq.empty()){
+        const auto [cur_d, v] = pq.top();  pq.pop();
+        if(d[v] < -cur_d) continue;
+        for(auto &[u, len]: adj[v]){
+            if(len + d[v] < d[u]){
+                d[u] = len + d[v];
+                pq.push({-d[u], u});
+            }
+        }
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("dining.in", "r", stdin);
+    freopen("dining.out", "w", stdout);
+    
+    int m, k; cin >> n >> m >> k;
+    vector <vector<pi>> adj(n+1);
+    for(int i=0; i<m; i++){
+        int a, b, c; cin >> a >> b >> c;
+        adj[--a].pb({--b, c});
+        adj[b].pb({a, c});
+    }
+    int h[k], y[k];
+    for(int i=0; i<k; i++){
+        cin >> h[i] >> y[i];
+        h[i]--;
+    }
+    vi orig_d(n), d(n+1);
+    dijkstra(n-1, adj, orig_d);
+    for(int i=0; i<k; i++){
+        adj[n].pb({h[i], orig_d[h[i]]-y[i]});
+    }
+    // for(auto i: orig_d) cout << i << " ";
+    // cout << "\n";
+    dijkstra(n, adj, d);
+    // for(auto i: d) cout << i << " ";
+    // cout << "\n";
+    for(int i=0; i<n-1; i++){
+        cout << (d[i] <= orig_d[i]) << "\n";
+    }
+    return 0;
+}
