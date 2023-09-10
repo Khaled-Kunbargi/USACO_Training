@@ -1,0 +1,60 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e18
+#define all(x) (x).begin(), (x).end()
+
+int n;
+void dijkstra(int start, vector <vector<pi>> &adj, vi &t){
+    priority_queue <pi> pq;
+    pq.push({0, start});
+    vi d(n, OO); d[start] = 0;
+    while (!pq.empty()){
+        const auto [cur_d, v] = pq.top();  pq.pop();
+        if(d[v] < -cur_d) continue;
+        for(auto &[u, len]: adj[v]){
+            if(len + d[v] < d[u]){
+                d[u] = len + d[v];
+                pq.push({-d[u], u});
+            }
+        }
+    }
+    for(int i=0; i<d.size(); i++) t[i] = d[i];
+}
+
+int main() {
+    // ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("tractor.in", "r", stdin);
+    // freopen("tractor.out", "w", stdout);
+    
+    int m; cin >> n >> m;
+    vector <vector<pi>> adj(n), radj(n);
+    for(int i=0; i<m; i++){
+        int a, b, w; cin >> a >> b >> w;
+        adj[--a].pb({--b, w});
+        radj[b].pb({a, w});
+    }
+    /*for(auto i: adj){
+        for(auto j: i){
+            cout << j.f << " " << j.s << "\n";
+        }
+    }*/
+    vi d1(n), d2(n);
+    dijkstra(0, adj, d1);
+    dijkstra(n-1, radj, d2);
+
+    ll min_cost = OO;
+    for(int i=0; i<n; i++){
+        for(auto &[u, len]: adj[i]){
+            if(d1[i] == OO || d2[u] == OO) continue;
+            min_cost = min(min_cost, d1[i] + d2[u] + len/2);
+        }
+    }
+    cout << min_cost;
+    return 0;
+}
