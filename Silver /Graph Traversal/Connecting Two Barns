@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+const int maxn = 1e5;
+int comp[maxn];
+vi groups[maxn], adj[maxn];
+
+void dfs(int node, int c){
+    if(comp[node] != -1)  return;
+    comp[node] = c;
+    for(int i: adj[node]) dfs(i, c);
+}
+
+ll cost(int a, int b){
+    int dist = maxn;
+    for(int i: groups[a]){
+        int j = lower_bound(all(groups[b]), i) - groups[b].begin();
+        //cout << i << ' ' << j << "\n";
+        if(j > 0) dist = min(dist, abs(groups[b][j-1] - i));
+        if(j < groups[b].size()) dist = min(dist, abs(groups[b][j] - i));
+    }
+    return (ll) dist*dist;
+}
+void solve(){
+    int n, m; cin >> n >> m;
+    for(int i=0; i<n; i++){
+        comp[i] = -1;
+        adj[i].clear();
+        groups[i].clear();
+    }
+    for(int i=0; i<m; i++){
+        int a, b; cin >> a >> b;
+        adj[--a].pb(--b);
+        adj[b].pb(a);
+    }
+    int c= -1;
+    for(int i=0; i<n; i++){
+        if(comp[i] == -1){ dfs(i, ++c);}
+    }
+    for(int i=0; i<n; i++) groups[comp[i]].pb(i);
+    ll ans = cost(comp[0], comp[n-1]);
+    for(int co=1; co<c; co++){
+        ans = min(ans, cost(co, comp[0]) + cost(co, comp[n-1]));
+    }
+    cout << ans << "\n";
+}
+int main() {
+     ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("dining.in", "r", stdin);
+    // freopen("dining.out", "w", stdout);
+    
+    int t; cin >> t;
+    while(t--){solve();}
+    return 0;
+}
