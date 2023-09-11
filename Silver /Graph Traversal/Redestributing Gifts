@@ -1,0 +1,45 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+const int maxn = 500;
+vi adj[maxn];
+bool reachable[maxn][maxn];
+void dfs(int src, int cur){
+    if(reachable[src][cur]) return;
+    reachable[src][cur] = 1;
+    for(int i: adj[cur]) dfs(src, i);
+}
+
+int main() {
+    // ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("dining.in", "r", stdin);
+    // freopen("dining.out", "w", stdout);
+    
+    // int t; cin >> t;
+    // while(t--){solve();}
+    int n; cin >> n;
+    int a[n][n];
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){ cin >> a[i][j]; a[i][j]--; }
+        for(int j=0; j<n; j++){
+            adj[i].pb(a[i][j]);
+            if(a[i][j] == i) break;
+        }
+    }
+    for(int i=0; i<n; i++){ dfs(i, i); }
+
+    for(int i=0; i<n; i++){
+        for(int j: adj[i]){
+            if(reachable[j][i]){cout << j+1 << '\n'; break;}
+        }
+    }
+    return 0;
+}
