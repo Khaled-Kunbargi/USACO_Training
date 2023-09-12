@@ -1,0 +1,47 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+const int maxn = 100000;
+vi adj[maxn], groups, vis;
+int c=0; ll ans=0;
+
+void dfs(int x, int j){
+    if(groups[x]) return;
+    groups[x] = j;
+    if(j==2) c++;
+    for(int i: adj[x]){
+        dfs(i, j==1?2: 1);
+    }
+}
+void dfs2(int x){
+    if(vis[x]) return;
+    vis[x]=1;
+    for(auto i: adj[x]){
+        dfs2(i);
+    }
+    if(groups[x] == 1) ans += max(c-(int)adj[x].size(), 0);
+}
+int main() {
+    // ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("dining.in", "r", stdin);
+    // freopen("dining.out", "w", stdout);
+    
+    int n; cin >> n;
+    groups.resize(n); vis.resize(n);
+    for(int i=0; i<n-1; ++i){
+        int a, b; cin >> a >> b;
+        adj[--a].pb(--b);
+        adj[b].pb(a);
+    }
+    dfs(0, 1);
+    dfs2(0);
+    cout << ans;
+    return 0;
+}
