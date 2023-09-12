@@ -1,0 +1,58 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+const int maxn = 200000;
+unordered_set <int> adj[maxn];
+set <int> unvis;
+int c = 0, sz[maxn];
+
+void dfs(int x){
+    sz[c]++;
+    auto it = unvis.begin();
+    while(it != unvis.end()){
+        if(adj[x].count(*it)){
+            it++;
+        }else{
+            int last = *it;
+            unvis.erase(it);
+            dfs(last);
+            it = unvis.lower_bound(last);
+        }
+    }
+}
+
+int main() {
+    // ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("dining.in", "r", stdin);
+    // freopen("dining.out", "w", stdout);
+    
+    // int t; cin >> t;
+    // while(t--){solve();}
+    int n, m; cin >> n >> m;
+    for(int i=0; i<m; ++i){
+        int a, b; cin >> a >> b;
+        adj[--a].insert(--b);
+        adj[b].insert(a);
+    }
+    for(int i=0; i<n; ++i) unvis.insert(i);
+    for(int i=0; i<n; ++i){
+        auto it = unvis.find(i);
+        if(it != unvis.end()){
+            unvis.erase(it);
+            dfs(*it);
+            c++;
+        }
+    }
+    cout << c << "\n";
+    sort(sz, sz + c);
+    for(int i=0; i<c; ++i){cout << sz[i] << ' ';}
+    return 0;
+}
