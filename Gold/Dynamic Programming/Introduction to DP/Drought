@@ -1,0 +1,65 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+const int m = 1e9+7;
+int num_ways(const vi &levels){
+    vector<vi> num_ways{vi(levels[0]+1, 1)};
+    if(levels.size() >= 2){
+        int mn = min(levels[0], levels[1]);
+        num_ways.pb({1});
+        for(int i=1; i<=levels[1]; ++i){
+            num_ways[1].pb(i <= mn);
+        }
+    }
+    vi prefs{0};
+    for(int i: num_ways.back()){
+        prefs.pb(prefs.back()+i);
+    }
+    for(int c=2; c < levels.size(); ++c){
+        num_ways.pb(vi(levels[c]+1));
+        for(int l=0; l<=levels[c-1]; ++l){
+            num_ways[c][0] = (num_ways[c][0] + num_ways[c-1][l]) % m;
+        }
+        for(int l=1; l <= levels[c]; ++l){
+            if(l <= levels[c-1]){
+                num_ways[c][l] = prefs[levels[c-1]-l+1];
+            }
+        }
+        prefs = {0};
+        for(int l=0; l<levels[c]; ++l){
+            prefs.pb((prefs.back() + num_ways[c][l]) % m);
+        }
+    }
+    int total=0; 
+    for(int i: num_ways.back()){
+        total = (total + i) %m;
+    }
+    return total;
+}
+int main() {
+    // ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("snakes.in", "r", stdin);
+    // freopen("snakes.out", "w", stdout);    
+    int n; cin >> n;
+    vi a(n);
+    int min_hunger = OO;
+    for(int &i: a){ cin >> i; min_hunger = min(min_hunger, i);}
+
+    int total = num_ways(a);
+    if(n&1){
+        for(int i=1; i<=min_hunger; ++i){
+            for(int &j: a) --j;
+            total = (total + num_ways(a))%m;
+        }
+    }
+    cout << total;
+    return 0;
+}
