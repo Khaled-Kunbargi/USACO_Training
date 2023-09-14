@@ -1,0 +1,31 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+int main() {
+    // ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("snakes.in", "r", stdin);
+    // freopen("snakes.out", "w", stdout);    
+    int n; cin >> n;
+    vi a(n), dp(n+1, OO);
+    for(int &i: a) cin >> i;
+    dp[0] = -OO;
+    for(int i=0; i<n; ++i){
+        int l = upper_bound(all(dp), a[i]) - dp.begin();
+        if(dp[l-1] < a[i] && a[i] < dp[l])
+            dp[l] = a[i];
+    }
+    int ans=0;
+    for(int l=0; l<=n; ++l){
+        if(dp[l] != OO) ans = l;
+    }
+    cout << ans;
+    return 0;
+}
