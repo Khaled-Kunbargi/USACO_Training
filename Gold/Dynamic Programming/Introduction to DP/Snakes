@@ -1,34 +1,40 @@
+//Now this is my solution:
 #include <bits/stdc++.h>
 using namespace std;
-typedef long long ll; 
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
 
 int main() {
     ios::sync_with_stdio(0); cin.tie(0);
     freopen("snakes.in", "r", stdin);
-    freopen("snakes.out", "w", stdout);
-
+    freopen("snakes.out", "w", stdout);    
     int n, k; cin >> n >> k;
-    vector <int> a(n+1);
-    for(int i=1; i<=n; i++) cin >> a[i];
+    vi a(n+1);
+    for(int i=1; i<=n; ++i) cin >> a[i];
 
-    vector <vector<int>> dp(n+1, vector<int> (k+1));
-    //dp[i][j] : min sum of net sizes for the first i snake groups
-    //with exactly j resizings.
-
-    int mx = -1, sum=0;
-    for(int i=1; i<=n; i++){
-        mx = max(mx, a[i]);
-        dp[i][0] = i * mx;
-        for(int j=1; j<=k; j++){
-            dp[i][j] = INT_MAX;
-            int net_size = a[i];
-            for(int c=i-1; c >= 0; c--){
-                dp[i][j] = min(dp[i][j], dp[c][j-1] + net_size * (i-c));
-                net_size = max(net_size, a[c]);
+    vector<vi> dp(n+1, vi(k+1));
+    int mx=0, sum=0;
+    for(int i=1; i<=n; ++i){
+        mx = max((ll)mx, a[i]);
+        dp[i][0] = mx * i;
+    }
+    for(int i=1; i<=n; ++i){
+        sum += a[i];
+        for(int resize=1; resize<=k; ++resize){
+            int mx = a[i];
+            dp[i][resize] = OO;
+            for(int j=i-1; j >= 0; --j){
+                dp[i][resize] = min(dp[i][resize], dp[j][resize-1] + mx * (i-j));
+                mx = max((ll)mx, a[j]);
             }
         }
-        sum += a[i];
     }
     cout << dp[n][k] - sum;
     return 0;
-}  
+}
