@@ -1,0 +1,56 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT64_MAX
+#define all(x) (x).begin(), (x).end()
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("taming.in", "r", stdin);
+    freopen("taming.out", "w", stdout);    
+    int n; cin >> n;
+    int a[n];
+    for(int i=0; i<n; ++i) cin >> a[i];
+
+    vector <vi> range_ans(n, vi(n));
+    for(int i=0; i<n; ++i){
+        for(int j=i; j<n; ++j){
+            if(j) range_ans[i][j] = range_ans[i][j-1] + (a[j] != j-i);
+            else range_ans[i][j] = (a[j] != 0);
+        }
+    }
+    vector<vi> dp(n+1, vi(n, OO));
+    //[i][j]: i: number of breakouts. j: number of days.
+    for(int i=1; i<=n; ++i){
+        for(int j=i-1; j<n; ++j){
+            if(!j){
+                if(a[j] == 0) dp[i][j] = 0;
+                else dp[i][j] = 1;
+                continue;
+            }
+            //Case 1: 
+            if(dp[i][j-1] != OO) 
+                dp[i][j] = dp[i][j-1]+1;
+
+            //Case: 2
+            if(a[j] && dp[i-1][j-1] != OO) 
+                dp[i][j] = min(dp[i][j], dp[i-1][j-1]+1);
+
+            //Case: 3
+            if(j - a[j]-1 >= 0 && dp[i-1][j - a[j]-1] != OO) {
+                dp[i][j] = min(dp[i][j], 
+            dp[i-1][j-a[j]-1] + range_ans[j-a[j]][j]);
+            }
+
+            if(j-a[j] == 0 && i == 1)
+                dp[i][j] = min(dp[i][j], range_ans[0][j]);
+        }
+    }
+    for(int i=1; i<=n; ++i){cout << dp[i][n-1] << "\n";}
+    return 0;
+}
