@@ -1,0 +1,48 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+int dp[502][502];
+
+/* This is the greedy aproach that doesn't work on for example "abcacb" it outputs 0
+but it should be 2.
+#include <bits/stdc++.h>
+int main() {
+    string str; cin >> str;
+    int n = str.size();
+    vi ind;
+    map<char,int> vis;
+    for(char c: str) vis[c]++;
+    int c=0;
+    for(char i='a'; i<='z'; ++i){
+        if(vis[i] & 1){ c++;}
+    }
+    cout << c;
+    return 0;
+}
+*/
+
+int main() {
+    // ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("snakes.in", "r", stdin);
+    // freopen("snakes.out", "w", stdout);    
+    string a; cin >> a;
+    for(int j=0; j<=a.size(); ++j){
+        for(int i=0; i< a.size()-j; ++i){
+            dp[i][i+j] = dp[i+1][i+j]+1;
+            for(int k=i+1; k<=i+j; ++k){
+                if(a[k] == a[i])
+                    dp[i][i+j] = min(dp[i][i+j], dp[i+1][k-1] + dp[k+1][i+j]);
+            }
+        }
+    }
+    cout << dp[0][a.size()-1];
+    return 0;
+}
