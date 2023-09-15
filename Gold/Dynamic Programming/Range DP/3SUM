@@ -1,0 +1,45 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+int max_val = 1e6;
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("threesum.in", "r", stdin);
+    freopen("threesum.out", "w", stdout);    
+    int n, q; cin >> n >> q;
+    vector<int> a(n);
+    for(int &i: a){ cin >> i; i += max_val;}
+    vector<int> freq(2 * max_val);
+    vector <vi> ways(n, vi(n));
+    for(int i=0; i<n; ++i){
+        for(int j=i+1; j<n; ++j){
+            int comp = max_val*3 - (a[j] + a[i]);
+            if(comp >= 0 && comp < 2*max_val)
+                ways[i][j] = freq[comp];
+            freq[a[j]]++;
+        }
+        for(int j=i+1; j<n; ++j) freq[a[j]]--;
+    }
+    // for(int i=0; i<n; ++i){
+    //     for(int j=i; j<n; ++j) cout << ways[i][j] << " ";
+    //     cout << "\n";
+    // }
+    for(int i=n-1; i>=0; --i){
+        for(int j=i+1; j<n; ++j){
+            ways[i][j] += (ways[i+1][j] + ways[i][j-1] - ways[i+1][j-1]);
+        }
+    }
+    while(q--){
+        int l, r; cin >> l >> r;
+        cout << ways[--l][--r] << "\n";
+    }
+    return 0;
+}
