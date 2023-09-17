@@ -1,0 +1,76 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+ll dp[20][50][2][2];
+string num; 
+
+void reset(){
+    for(int i=0; i<20; ++i){
+        for(int j=0; j<50; ++j){
+            for(int a=0; a<2; ++a){
+                for(int b=0; b<2; ++b){dp[i][j][a][b] = -1;}
+            }
+        }   
+    }
+}
+
+ll solve_dp(int pos, int k, bool under, bool started, int targ, int targ2){
+    if(pos == num.size()){
+        if(!started) return 0;
+        if(targ2 != -1){
+            if(k == 20) return 1;
+            else return 0;
+        }
+        if(k >= 20) return 1;
+        else return 0;
+    }
+    if(dp[pos][k][under][started] != -1) return dp[pos][k][under][started];
+    ll ans = 0;
+    for(int i=0; i<=9; ++i){
+        int cur_dig = num[pos]-'0';
+        if(!under && i > cur_dig) break;
+        bool new_under = under, is_started = started || (i != 0);
+        if(i < cur_dig) new_under = 1;
+        if(is_started && targ2 != -1 && targ != i && targ2 != i) continue;
+        int new_k = k;
+        if(is_started){
+            if(i == targ) new_k = k+1;
+            else new_k = k-1;
+        }
+        ans += solve_dp(pos+1, new_k, new_under, is_started, targ, targ2);
+    }
+    return dp[pos][k][under][started] = ans;
+}
+ll count_interesting_to(ll ubound){
+    num = to_string(ubound);
+    ll ans= 0;
+    for(int i=0; i<=9; ++i){
+        reset();
+        ans += solve_dp(0, 20, 0, 0, i, -1);
+    }
+    ll duplicates = 0;
+    for(int i=0; i<=9; ++i){
+        for(int j=0; j<=9; ++j){
+            reset();
+            duplicates += solve_dp(0, 20, 0, 0, i, j);
+        }
+    }
+    return ans - duplicates/2;
+}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("odometer.in", "r", stdin);
+    freopen("odometer.out", "w", stdout);    
+    ll x, y; cin >> x >> y;
+    cout << count_interesting_to(y) - count_interesting_to(x-1);
+    return 0;
+}
