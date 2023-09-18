@@ -1,0 +1,42 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("art2.in", "r", stdin);
+    freopen("art2.out", "w", stdout);    
+    
+    int n; cin >> n;
+    vi a(n+1);
+    vi start(n+1, OO), end(n+1, -OO);
+    for(int i=1; i<=n; ++i) cin >> a[i];
+    for(ll i=0; i<=n; ++i){
+        start[a[i]] = min(start[a[i]], i);
+        end[a[i]] = max(end[a[i]], i);
+    }
+    vi active;
+    int ans=0;
+    start[0] = 0;
+    end[0] = n+1;
+    for(int i=0; i<=n; ++i){
+        int cur = a[i];
+        if(i == start[cur]){ 
+            active.pb(a[i]);
+            ans = max(ans, (int)active.size());
+        }
+        if(cur != active.back()){
+            cout << "-1\n"; return 0;
+        }
+        if(i == end[cur]){active.pop_back();}
+    }
+    cout << ans-1;
+    return 0;
+}
