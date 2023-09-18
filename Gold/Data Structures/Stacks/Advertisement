@@ -1,0 +1,35 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+ 
+int main() {
+    // ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("odometer.in", "r", stdin);
+    // freopen("odometer.out", "w", stdout);    
+    
+    int n; cin >> n;
+    vi a(n);
+    for(ll &i: a) cin >> i;
+    a.pb(-1);
+    vi st; st.pb(-1);
+    ll ans =0;
+    for(int i=0; i<=n; ++i){
+        while(st.back() != -1 && a[st.back()] >= a[i]){
+            int x = st.back(); 
+            st.pop_back();
+            ll new_area = 1LL*(i-1-st.back()) * a[x];
+            ans = max(ans, new_area);
+        }
+        st.pb(i);
+    }
+    cout << ans;
+ 
+    return 0;
+}
