@@ -1,0 +1,68 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+int a[200000];
+multiset <ll> up, low;
+
+ll s1, s2;
+void in(int x){
+    if(x > *low.rbegin()){
+        up.insert(x); s2 += x;
+        if(up.size() > low.size()){
+            low.insert(*up.begin()); s1 += *up.begin();
+            s2 -= *up.begin();
+            up.erase(up.begin()); 
+        }
+    }else{
+        low.insert(x); s1 += x;
+        if(low.size() > up.size()+1){
+            up.insert(*prev(low.end())); s2 += *prev(low.end());
+            s1 -= *prev(low.end());
+            low.erase(prev(low.end()));
+        }
+    }
+}
+void er(int x){
+    if(x > *low.rbegin()){
+        up.erase(up.find(x)); s2 -= x;
+    }else{
+        low.erase(low.find(x)); s1 -= x;
+        if(low.size() < up.size()){
+            low.insert(*up.begin()); s1 += *up.begin();
+            s2 -= *up.begin();
+            up.erase(up.begin());
+        }
+    }
+}
+
+int main() {
+    // ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("art2.in", "r", stdin);
+    // freopen("art2.out", "w", stdout);    
+    int n, k; cin >> n >> k;
+    for(int i=0; i<n; ++i) cin >> a[i];
+    low.insert(a[0]); s1 += a[0];
+    for(int i=1; i<k; ++i) in(a[i]);
+    ll m = *low.rbegin();
+    cout << abs((int)low.size()*m-s1) + abs((int)up.size()*m - s2) << " ";
+    for(int i=k; i<n; ++i){
+        if(k == 1){
+            in(a[i]);
+            er(a[i-k]);
+        }else{
+            er(a[i-k]);
+            in(a[i]);
+        }
+        m = *low.rbegin();
+        cout << abs((ll)low.size()*m-s1) + abs((ll)up.size()*m - s2) << " ";
+    }
+    return 0;
+}
