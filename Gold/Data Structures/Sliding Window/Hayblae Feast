@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e18
+#define all(x) (x).begin(), (x).end()
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("hayfeast.in", "r", stdin);
+    freopen("hayfeast.out", "w", stdout);    
+    ll n, m; cin >> n >> m;
+    vector <pi> a(n);
+    for(auto &i: a) cin >> i.f >> i.s;
+    multiset <int> ms;
+    ll ans = OO,sum=0;
+    for(int r=0, l=0; r<n; ++r){
+        ms.insert(a[r].s); sum += a[r].f;
+        if(sum < m) continue;
+        while(l<n && sum-a[l].f >= m){
+            ms.erase(ms.find(a[l].s));
+            sum -= a[l].f;
+            l++;
+        }
+        ans = min(ans, (ll)*ms.rbegin());
+    }
+    cout << ans;
+    return 0;
+}
