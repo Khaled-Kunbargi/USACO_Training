@@ -1,0 +1,31 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+int main() {
+    // ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("art2.in", "r", stdin);
+    // freopen("art2.out", "w", stdout);    
+    int n; cin >> n;
+    vi a(n);
+    for(ll &i: a) cin >> i;
+    multiset <int> ms;
+    int ans= 0;
+    for(int r=0, l=0; r<n; ++r){
+        ms.insert(a[r]);
+        while(l<n && ms.count(a[r]) > 1){
+            ms.erase(ms.find(a[l]));
+            l++;
+        }
+        ans = max(ans, (int)ms.size());
+    }
+    cout << ans;
+    return 0;
+}
