@@ -1,0 +1,72 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+ 
+bool cmp(const pi &a,const pi &b){
+    return a.f + a.s < b.f + b.s;
+}
+priority_queue <int> pl;
+priority_queue <int, vi, greater<int>> pr;
+ll pref[100001], lsum, rsum;
+void in(int x){
+    int median = pl.size() ? pl.top() : 1000000001;
+    if(x <= median){
+        pl.push(x);
+        lsum += x;
+    }else{
+        pr.push(x); rsum += x;
+    }
+    if(pl.size() > pr.size() + 1){
+        int nxt = pl.top();
+        pl.pop(); lsum -= nxt;
+        pr.push(nxt); rsum += nxt;
+    }else if(pr.size() > pl.size()){
+        int nxt = pr.top();
+        pr.pop(); rsum -= nxt;
+        pl.push(nxt); lsum += nxt;
+    }
+}
+
+int main() {
+    // ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("art2.in", "r", stdin);
+    // freopen("art2.out", "w", stdout);    
+    int k,n; cin>>k>>n;
+    vector <pi> v{{0, 0}};
+    ll same_side = 0;
+    for(int i=0; i<n; ++i){
+        char a, b;
+        int x, y; 
+        cin >> a >> x >> b >> y;
+        if(a == b) same_side += abs(x-y);
+        else v.pb({x, y});
+    }
+    sort(all(v), cmp);
+    n = v.size()-1;
+    same_side += n;
+    for(int i=1; i<=n; ++i){
+        in(v[i].f);
+        in(v[i].s);
+        pref[i] = rsum-lsum;
+    }
+    ll ans = pref[n];
+    if(k == 2){
+        while(pl.size()) pl.pop();
+        while(pr.size()) pr.pop();
+        rsum = 0; lsum = 0;
+        for(int i=n; i>=1; --i){
+            in(v[i].f);
+            in(v[i].s);
+            ans = min(ans, pref[i-1] + rsum-lsum);
+        }
+    }
+    cout << ans+same_side;
+    return 0;
+}
