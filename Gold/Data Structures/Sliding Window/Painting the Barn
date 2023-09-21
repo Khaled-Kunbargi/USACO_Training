@@ -1,0 +1,89 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e18
+#define all(x) (x).begin(), (x).end()
+
+const int N = 200;
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("paintbarn.in", "r", stdin);
+    freopen("paintbarn.out", "w", stdout);    
+    int n, k; cin >> n >> k;
+    vector <vi> barn(N, vi(N));
+    for(int i=0; i<n; ++i){
+        int x1,y1,x2,y2; 
+        cin >> x1 >> y1 >> x2 >> y2;
+        for(int y=y1; y<y2; ++y){
+            barn[y][x1]++;
+            if(x2 < N) barn[y][x2]--;
+        }
+    }
+    for(int y=0; y<N; ++y){
+        for(int x=1; x<N; ++x) 
+            barn[y][x] = barn[y][x-1] + barn[y][x];
+    }
+    int isum=0;
+    vector <vi> profit(N, vi(N)), pre_profit(N+1, vi(N+1));
+    for(int i=0; i<N; ++i){
+        for(int j=0; j<N; ++j){
+            if(barn[i][j] == k){  profit[i][j] = -1; isum++; }
+            if(barn[i][j] == k-1) profit[i][j] = 1;
+        }
+    }
+    for(int i=0;i<N; ++i){
+        for(int j=0; j<N; ++j){
+            pre_profit[i+1][j+1] = pre_profit[i][j+1] + pre_profit[i+1][j] -pre_profit[i][j] + profit[i][j];
+        }
+    }
+    // for(int i=0; i<10; ++i){
+    //     for(int j=0; j<10; ++j) cout << profit[i][j] << ' ';
+    //     cout << "\n";
+    // }
+    auto rec_sum = [&](int from_x, int from_y, int to_x, int to_y){
+        return (pre_profit[to_y+1][to_x+1]-pre_profit[from_y][to_x+1]
+        -pre_profit[to_y+1][from_x] + pre_profit[from_y][from_x]);
+    };
+    vi max_left(N), max_top(N), max_bottom(N), max_right(N);
+    for(int l=0; l<N; ++l){
+        for(int r=l; r<N; ++r){
+            int top=0, left=0, rec;
+            for(int i=1; i<N; ++i){
+                rec = top + rec_sum(i-1, l, i-1, r);
+                max_top[i] = max(max_top[i], top = max(rec, 0));
+
+                rec = left + rec_sum(l, i-1, r, i-1);
+                max_left[i] = max(max_left[i], left = max(rec, 0));
+            }
+            int bottom=0, right=0;
+            for(int i=N-1; i>=1; --i){
+                rec = bottom + rec_sum(i, l, i, r);
+                max_bottom[i] = max(max_bottom[i], bottom = max(rec, 0));
+
+                rec = right + rec_sum(l, i, r, i);
+                max_right[i] = max(max_right[i], right = max(rec, 0));
+            }
+        }
+    }
+    for(int i=1; i<N; ++i){
+        max_top[i] = max(max_top[i], max_top[i-1]);
+        max_left[i] = max(max_left[i], max_left[i-1]);        
+    }
+    for(int i=N-2; i>=0; --i){
+        max_bottom[i] = max(max_bottom[i], max_bottom[i+1]);
+        max_right[i] = max(max_right[i], max_right[i+1]);
+    }
+    int max_paintable=0;
+    for(int i=0; i<N; ++i){
+        max_paintable = max(max_paintable, max_bottom[i] + max_top[i]);
+        max_paintable = max(max_paintable, max_right[i] + max_left[i]);
+    }
+    cout << isum + max_paintable;
+    return 0;
+}
