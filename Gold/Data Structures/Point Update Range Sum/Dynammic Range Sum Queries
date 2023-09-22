@@ -70,3 +70,54 @@ int main() {
     }
     return 0;
 }
+/* Also solution with BIT
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+const int N = 200000;
+int n;
+ll t[N+1];
+int lsb(int x){ return x & -x;}
+ll sum(int k){
+    ll x = 0;
+    while(k > 0){
+        x += t[k];
+        k -= lsb(k);
+    }
+    return x;
+}
+void add(int k, int v){
+    while(k <= n){
+        t[k] += v;
+        k += lsb(k);
+    }
+}
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("paintbarn.in", "r", stdin);
+    // freopen("paintbarn.out", "w", stdout);    
+    int q; cin >> n >> q;
+    vi arr(n+1);
+    for(int i=0; i<n; ++i){
+        int x; cin >> x;
+        add(i+1, x);
+        arr[i+1] = x;
+    }
+    while(q--){
+        int tp, a, b;
+        cin >> tp >> a >> b;
+        if(tp == 1) add(a, b - (sum(a)-sum(a-1)));
+        else cout << sum(b)  - sum(a-1) << "\n";
+    }   
+
+    return 0;
+}
+*/
