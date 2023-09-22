@@ -1,0 +1,43 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+ 
+#include <ext/pb_ds/assoc_container.hpp>
+using namespace __gnu_pbds;
+typedef tree<pi,null_type,less<pi>,rb_tree_tag,
+tree_order_statistics_node_update> indexed_set;
+ 
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("paintbarn.in", "r", stdin);
+    // freopen("paintbarn.out", "w", stdout);    
+    int n,q; cin >> n >> q;
+    vi a(n);
+    for(int &i: a) cin >> i;
+    indexed_set se;
+    for(int i=0; i<n; ++i){
+        se.insert({a[i], i});
+    }
+    for(int i=0; i<q; ++i){
+        char ch; cin >> ch; 
+        int l, r; cin >> l >> r;
+        if(ch == '?'){
+            int right = se.order_of_key({r+1, 0});
+            int left = se.order_of_key({l, 0});
+            cout << right-left << "\n";
+        }else{
+            int cur = a[--l];
+            se.erase(se.lower_bound({cur, 0}));
+            a[l] = r;
+            se.insert({r,i});
+        }
+    }
+    return 0;
+}
