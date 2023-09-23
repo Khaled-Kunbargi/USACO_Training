@@ -1,0 +1,79 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <ll,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+const int mod = 1e9+7;
+template <class t> struct segtree {
+    int size = 1;
+    vector <t> values;
+    void init(int n){
+        while(size < n) size *= 2;
+        values.assign(2*size, 0LL);
+    }
+    void add(int i, int v, int x, int lx, int rx){
+        if(rx - lx == 1){ 
+            values[x] += v; 
+            values[x] %= mod;
+            return;
+        }
+        int m = (lx+rx)/2;
+        if(i < m)
+            add(i, v, 2*x+1, lx, m);
+        else
+            add(i, v, 2*x+2, m, rx);
+        values[x] = values[2*x+1] +  values[2*x+2];
+        values[x] %= mod;
+    }
+    void add(int i, int v){
+        add(i, v, 0, 0, size);
+    }
+    t calc(int l, int r, int x, int lx, int rx){
+        if(rx <= l || r <= lx) return 0;
+        if(l <= lx && rx <= r){
+            return values[x];
+        }
+        int m = (lx+rx)/2;
+        t res = 0;
+        res += calc(l, r, 2*x+1, lx, m); res %= mod;
+        res += calc(l, r, 2*x+2, m, rx); res %= mod;
+        return res;
+    }
+    t calc(int l, int r){
+        return calc(l, r, 0, 0, size);
+    }
+};
+int main() {
+    // ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("paintbarn.in", "r", stdin);
+    // freopen("paintbarn.out", "w", stdout);    
+    int n; cin >> n;
+    vi a(n), b;
+    for(int &i: a) cin >> i;
+    b = a;
+    sort(all(b));
+    map <int,int> compress;
+    int at=0;
+    for(int i=0; i<n; ++i){
+        if(!compress.count(b[i])) 
+            compress[b[i]] = at++;
+    }
+    // for(auto i: a) cout << compress[i] << ' ';
+    // cout << "\n";
+    int m = mod;
+    segtree <ll> st; st.init(b.size());
+    ll ans = 0;
+    for(int i=0; i<n; ++i){
+        ans += st.calc(0, compress[a[i]])+1;
+        st.add(compress[a[i]], st.calc(0, compress[a[i]])+1);
+        ans %= m;
+    }
+    cout << ans;
+    return 0;   
+}
