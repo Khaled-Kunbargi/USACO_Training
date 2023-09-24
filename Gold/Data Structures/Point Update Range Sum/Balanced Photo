@@ -1,0 +1,65 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <ll,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+const int mod = 1e9+7;
+template <class t> struct BIT {
+    int size;
+    vector <t> bit;
+    BIT(int n): size(n), bit(n+1) {}
+    void clear() {bit.assign(size+1, 0);}
+    void update(int x, int v){
+        if(x == 0) return;
+        while(x <= size){
+            bit[x] += v;
+            x += x&-x;
+        }
+    }
+    t sum(int k){
+        t res = 0;
+        while(k > 0){
+            res += bit[k];
+            k -= k&-k;
+        }
+        return res;
+    }
+};
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("bphoto.in", "r", stdin);
+    freopen("bphoto.out", "w", stdout);    
+    int n; cin >> n;
+    vi a(n);
+    for(int &i: a) cin >> i;
+    vi t(a);
+    sort(all(t));
+    map <int,int> compress;
+    for(int i=0,at=0;i<n; ++i){
+        if(compress.count(t[i])) continue;
+        compress[t[i]] = ++at;
+    }
+    BIT <int> bit1(n), bit2(n);
+    for(int i=0; i<n; ++i) bit2.update(compress[a[i]], 1);
+    int c=0;
+    //for(auto i: a) cout << compress[i] << " ";
+    //cout << "\n"; return 0;
+    for(int i=0; i<n; ++i){
+        int cur = compress[a[i]];
+        bit1.update(cur, 1);
+        bit2.update(cur, -1);
+        int big1 = bit1.sum((*compress.rbegin()).s) - bit1.sum(cur), big2;
+        big2 = bit2.sum((*compress.rbegin()).s) - bit2.sum(cur);
+        //cout << big1 << ' ' << big2 << "\n";
+        if(min(big1, big2)*2 < max(big1, big2)) c++;
+    }
+    cout << c;
+    return 0;   
+}
