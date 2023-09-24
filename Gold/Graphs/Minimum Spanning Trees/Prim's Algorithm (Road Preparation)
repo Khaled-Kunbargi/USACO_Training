@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <ll,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+
+const int maxn=100000;
+bool vis[maxn];
+vector <pi> adj[maxn];
+
+ll prim(int size){
+    priority_queue <pi> pq;
+    pq.push({0, 0});
+    ll weight=0;
+    vi dist(size, OO); dist[0] = 0;
+    while(!pq.empty()){
+        auto [c, cur] = pq.top(); pq.pop(); 
+        vis[cur] = 1;
+        if(dist[cur] < -c) continue;
+        weight += -c;
+        for(auto &[nxt, w]: adj[cur]){
+            if(w < dist[nxt] && !vis[nxt]){
+                dist[nxt] = w;
+                pq.push({-w, nxt});
+            }
+        }
+    }
+    return weight;
+}
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("bphoto.in", "r", stdin);
+    // freopen("bphoto.out", "w", stdout);    
+    int n, m; cin >> n >> m;
+    for(int i=0; i<m; ++i){
+        int a, b, w; cin >> a >> b >> w;
+        adj[--a].pb({--b, w});
+        adj[b].pb({a, w});
+    }
+    ll ans= prim(n);
+    for(int i=0; i<n; ++i){ 
+        if(!vis[i]){ cout <<"IMPOSSIBLE\n"; return 0;}
+    }
+    cout << ans;
+    return 0;   
+}
