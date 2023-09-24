@@ -1,0 +1,96 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <ll,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e9
+#define all(x) (x).begin(), (x).end()
+
+const int mod = 1e9+7;
+template <class t> struct segtree {
+    int size = 1;
+    vector <t> values;
+    void init(int n){
+        while(size < n) size *= 2;
+        values.assign(2*size, 0LL);
+    }
+    void add(int i, int v, int x, int lx, int rx){
+        if(rx - lx == 1){ 
+            values[x] += v; 
+            values[x] %= mod;
+            return;
+        }
+        int m = (lx+rx)/2;
+        if(i < m)
+            add(i, v, 2*x+1, lx, m);
+        else
+            add(i, v, 2*x+2, m, rx);
+        values[x] = values[2*x+1] +  values[2*x+2];
+        values[x] %= mod;
+    }
+    void add(int i, int v){
+        add(i, v, 0, 0, size);
+    }
+    t calc(int l, int r, int x, int lx, int rx){
+        if(rx <= l || r <= lx) return 0;
+        if(l <= lx && rx <= r){
+            return values[x];
+        }
+        int m = (lx+rx)/2;
+        t res = 0;
+        res += calc(l, r, 2*x+1, lx, m); res %= mod;
+        res += calc(l, r, 2*x+2, m, rx); res %= mod;
+        return res;
+    }
+    t calc(int l, int r){
+        return calc(l, r, 0, 0, size);
+    }
+};
+
+template <class t> struct BIT {
+    int size;
+    vector <t> bit;
+    BIT(int n): size(n), bit(n+1) {}
+    void update(int x, int v){
+        while(x <= size){
+            bit[x] += v;
+            x += x&-x;
+        }
+    }
+    t sum(int k){
+        t res = 0;
+        while(k > 0){
+            res += bit[k];
+            k -= k&-k;
+        }
+        return res;
+    }
+};
+int main() {
+    // ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("paintbarn.in", "r", stdin);
+    // freopen("paintbarn.out", "w", stdout);    
+    int n, q; cin >> n >> q;
+    vi a(n), ans(q);
+    for(int &i: a) cin >> i;
+    vector <vector<pi>> query(n);
+    for(int i=0; i<q; ++i){
+        int a, b; cin >> a >> b;
+        query[--a].pb({b, i});
+    }
+    map <int,int> last_index;
+    BIT <int> bit(n);
+    for(int i=n-1; i>=0; --i){
+        if(last_index.count(a[i]) > 0) bit.update(last_index[a[i]], -1);
+        last_index[a[i]] = i+1;
+        bit.update(i+1, 1);
+        for(auto qr: query[i]){
+            ans[qr.s] = bit.sum(qr.f);
+        }
+    }
+    for(auto i: ans) cout << i << " ";
+    return 0;   
+}
