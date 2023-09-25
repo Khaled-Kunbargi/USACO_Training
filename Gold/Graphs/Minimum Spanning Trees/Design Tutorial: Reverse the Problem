@@ -1,0 +1,89 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+ 
+struct item {
+    int a, b, w; 
+};
+ 
+const int maxn=2000;
+int p[maxn], sz[maxn];
+void init(){
+    for(int i=0; i<maxn; i++){ p[i] = i; sz[i] = 1;}
+}
+int get(int a){ return p[a] = (p[a] == a ? a: get(p[a])); }
+bool same_set(int a, int b){return get(a) == get(b);}
+void unite(int a, int b){
+    a = get(a), b = get(b);
+    if(a == b) return;
+    if(sz[b] > sz[a]) swap(a, b);
+    p[b] = a;           
+    sz[a] += sz[b];
+}
+ 
+inline bool cmp(const item &a, const item &b){
+    return a.w < b.w;
+}
+ 
+int ngrid[maxn][maxn];
+vector <pi> adj[maxn];
+void dfs(int in, int node, int pa, int sum){
+    ngrid[node][in] = ngrid[in][node] = sum;
+    for(const auto &[i, w]: adj[node]){
+        if(i != pa){ 
+            dfs(in, i, node, sum+w); 
+        }
+    }
+}
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("fencedin.in", "r", stdin);
+    // freopen("fencedin.out", "w", stdout);    
+    int n; cin >> n;
+    int grid[n][n];
+    for(int i=0; i<n; ++i){
+        for(int j=0; j<n; ++j) cin >> grid[i][j];
+    }
+    bool ok=1;
+    for(int i=0; i<n && ok; ++i){
+        for(int j=0; j<n; ++j){
+            int x = grid[i][j];
+            if(x < 0 || (x==0 && i!=j) || grid[i][j] != grid[j][i] || (i==j && x != 0)){
+                ok = 0;
+                break;
+            }
+        }
+    }
+    if(!ok){cout << "NO\n"; return 0;}
+    vector <item> edges;
+    for(int i=0; i<n; ++i){
+        for(int j=0; j<= i; ++j) edges.pb(item{i, j, grid[i][j]});
+    }
+    sort(all(edges), cmp);
+    init();
+    int tot=0;
+    for(const auto &[a, b, w]: edges){
+        if(tot == n) break;
+        if(!same_set(a, b)){
+            unite(a, b); 
+            tot = max(tot, sz[get(a)]);
+            adj[a].pb({b,w}); 
+            adj[b].pb({a,w});
+        }
+    }
+    for(int i=0; i<n; ++i) dfs(i, i, -1, 0);
+    for(int i=0; i<n; ++i){
+        for(int j=0; j<n; ++j){ 
+            if(ngrid[i][j] != grid[i][j]){ cout << "NO\n"; return 0;}
+        }
+    }
+    cout << "YES\n";
+    return 0;   
+}
