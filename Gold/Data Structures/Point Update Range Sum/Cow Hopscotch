@@ -1,0 +1,81 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+
+const int mod = 1e9+7, N = 754;
+vector <map <int,int>> m;
+int grid[N][N];
+
+template <class t> struct BIT {
+    int size;
+    vector <t> bit;
+    void init(int n){
+        size = n;
+        bit.resize(n+1);
+    }
+    void update(int x, int v){
+        while(x <= size){
+            bit[x] += v;
+            x += x&-x;
+        }
+    }
+    t sum(int k){
+        t res = 0;
+        while(k > 0){
+            res += bit[k];
+            k -= k&-k;
+        }
+        return res;
+    }
+};
+
+ll ans[N];
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("hopscotch.in", "r", stdin);
+    freopen("hopscotch.out", "w", stdout);    
+    int r, c, k; cin >> r >> c >> k;
+    BIT <ll> all_colors, color[k+3];
+    all_colors.init(c);
+    vector <vi> color_col(k+1);
+    m.resize(k+1);
+    int a[r][c];
+    for(int i=1; i<=r; ++i){
+        for(int j=1; j<=c; ++j){
+            int x; cin >> x;
+            grid[i][j] = x;
+            color_col[x].pb(j);
+        }
+    }
+    for(int i=0; i<color_col.size(); ++i){
+        sort(all(color_col[i]));
+        for(auto &j: color_col[i]){
+            if(!m[i][j]) m[i][j] = m[i].size()+1;
+        }
+    }
+    for(int i=0; i<m.size(); ++i){
+        color[i].init(m[i].size()+1);
+    }
+    all_colors.update(1, 1);
+    color[grid[1][1]].update(m[grid[1][1]][1], 1);
+    for(int i=2; i<=r; ++i){
+        for(int j=c; j>=2; --j){
+            int x = grid[i][j];
+            ans[j] = all_colors.sum(j-1) - color[x].sum(m[x][j]-1);
+            ans[j] %= mod;
+            all_colors.update(j, ans[j]);
+            color[x].update(m[x][j], ans[j]);
+        }
+    }
+    cout << ans[c];
+    return 0;   
+}
