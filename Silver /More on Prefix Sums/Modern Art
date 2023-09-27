@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+
+const int N = 1002;
+int grid[N][N];
+ll pref[N][N];
+struct item {
+    int a, b, x, y;
+};
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("art.in", "r", stdin);
+    freopen("art.out", "w", stdout);    
+    int n; cin >> n;
+    vector <item> colors(N*N+1);
+    for(int i=1; i<=N*N; ++i){
+        colors[i] = {OO, OO, -OO, -OO};
+    }
+    set <int> se;
+    for(int i=1; i<=n; ++i){
+        for(int j=1; j<=n; ++j){ 
+            int x; cin >> x;
+            grid[i][j] = x; 
+            if(x == 0) continue;
+            se.insert(x);
+            item cur = colors[x];
+            colors[x] = { min(cur.a, i), min(cur.b, j), max(cur.x, i), max(cur.y, j)};
+        }
+    }
+    int ans = n*n-se.size();
+    if(se.size()==1){
+        cout << ans; return 0;
+    }
+    set <int> fir;
+    for(auto i: se){
+        auto [a, b, x, y] = colors[i];
+        fir.insert(i);
+        pref[a][b]++; pref[x+1][y+1]++;
+        pref[a][y+1]--; pref[x+1][b]--;
+    }
+    for(int i=1; i<=n; ++i){
+        for(int j=1; j<=n; ++j){
+            pref[i][j] += pref[i-1][j]+pref[i][j-1]-pref[i-1][j-1];
+            if(pref[i][j] > 1) fir.erase(grid[i][j]);
+        }
+    }
+    // for(int i=1; i<=n; ++i){
+    //     for(int j=1; j<=n; ++j)cout << pref[i][j] << " ";
+    //     cout << "\n";
+    // }
+    cout << ans+fir.size();
+    return 0;   
+}
