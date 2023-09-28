@@ -1,0 +1,143 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+
+const int N = 100001;
+vi adj[N];
+int start[N], en[N], euler_tour[2*N], timer=0;
+int val[N], timer2=0, tin[N];
+void dfs(int node, int pa=-1){
+    start[node] = timer++; 
+    tin[node] = timer2;
+    euler_tour[timer2++] = node;
+    for(int &i: adj[node]){
+        if(i != pa){ 
+            dfs(i, node);
+            euler_tour[timer2++] = node;
+        }
+    }
+    en[node] = timer;
+}
+int min_tin(int x, int y){
+    if(x==-1)return y;
+    if(y==-1) return x;
+    return tin[x] < tin[y] ? x: y;
+}
+template <class t> struct segtree2 {
+    int size = 1;
+    vector <t> values;
+    void init(int n){
+        while(size < n) size *= 2;
+        values.assign(2*size, -1);
+    }
+    void modify(int i, int v, int x, int lx, int rx){
+        if(rx - lx == 1){ 
+            values[x] = v; 
+            return;
+        }
+        int m = (lx+rx)/2;
+        if(i < m) modify(i, v, 2*x+1, lx, m);
+        else modify(i, v, 2*x+2, m, rx);
+        values[x] = min_tin(values[2*x+1],values[2*x+2]);
+    }
+    void modify(int i, int v){ modify(i, v, 0, 0, size);}
+    t calc(int l, int r, int x, int lx, int rx){
+        if(rx <= l || r <= lx) return -1;
+        if(l <= lx && rx <= r){
+            return values[x];
+        }
+        int m = (lx+rx)/2;
+        t res = -1;
+        res = min_tin(res, calc(l, r, 2*x+1, lx, m));
+        res = min_tin(res, calc(l, r, 2*x+2, m, rx));
+        return res;
+    }
+    t calc(int l, int r){ return calc(l, r, 0, 0, size);}
+};
+
+template <class t> struct segtree {
+    int size = 1;
+    vector <t> values;
+    void init(int n){
+        while(size < n) size *= 2;
+        values.assign(2*size, 0);
+    }
+    void modify(int i, int v, int x, int lx, int rx){
+        if(rx - lx == 1){ 
+            values[x] ^= v; 
+            return;
+        }
+        int m = (lx+rx)/2;
+        if(i < m) modify(i, v, 2*x+1, lx, m);
+        else modify(i, v, 2*x+2, m, rx);
+        values[x] = values[2*x+1] ^ values[2*x+2];
+    }
+    void modify(int i, int v){modify(i, v, 0, 0, size);}
+    t calc(int l, int r, int x, int lx, int rx){
+        if(rx <= l || r <= lx) return 0;
+        if(l <= lx && rx <= r){
+            return values[x];
+        }
+        int m = (lx+rx)/2;
+        t res = 0;
+        res ^= calc(l, r, 2*x+1, lx, m);
+        res ^= calc(l, r, 2*x+2, m, rx);
+        return res;
+    }
+    t calc(int l, int r){return calc(l, r, 0, 0, size);}
+};
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("cowland.in", "r", stdin);
+    freopen("cowland.out", "w", stdout);    
+    int n, q; cin >> n >> q;
+    for(int i=0; i<n; ++i) cin >> val[i];
+    for(int i=0; i<n-1; ++i){
+        int a, b; cin >> a >> b;
+        adj[--a].pb(--b);
+        adj[b].pb(a);
+    }
+    dfs(0, -1);
+    segtree <int> st; st.init(n+1);
+    for(int i=0; i<n; ++i){
+        st.modify(start[i], val[i]);
+        st.modify(en[i], val[i]);
+    }
+    // for(int i=0; i<n; ++i) cout << start[i] << ' ';
+    // cout << "\n";
+    // for(int i=0; i<n; ++i) cout << st.calc(0, i+1) << " ";
+    // cout << "\n";
+    segtree2 <int> st2; st2.init(2*n+1);
+    for(int i=0; i<timer2; ++i){
+        st2.modify(i, euler_tour[i]);
+    }
+    while(q--){
+        int tp; cin >> tp;
+        if(tp == 1){
+            int x, v; cin >> x >> v;
+            --x;
+            st.modify(start[x], val[x]);
+            st.modify(en[x], val[x]);
+            val[x] = v;
+            st.modify(start[x], v);
+            st.modify(en[x], v);
+        }else{
+            int a, b; cin >> a >> b;
+            a--, b--;
+            //find lca.
+            if(tin[a] > tin[b]) swap(a, b);
+            int h = st2.calc(tin[a], tin[b]+1);
+            //cout << h << "\n";
+            cout << (st.calc(0, start[a]+1) ^ st.calc(0, start[b]+1) ^ val[h]) << "\n";
+        }   
+    }
+    return 0;   
+}
