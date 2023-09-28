@@ -111,10 +111,6 @@ int main() {
         st.modify(start[i], val[i]);
         st.modify(en[i], val[i]);
     }
-    // for(int i=0; i<n; ++i) cout << start[i] << ' ';
-    // cout << "\n";
-    // for(int i=0; i<n; ++i) cout << st.calc(0, i+1) << " ";
-    // cout << "\n";
     segtree2 <int> st2; st2.init(2*n+1);
     for(int i=0; i<timer2; ++i){
         st2.modify(i, euler_tour[i]);
@@ -132,10 +128,8 @@ int main() {
         }else{
             int a, b; cin >> a >> b;
             a--, b--;
-            //find lca.
             if(tin[a] > tin[b]) swap(a, b);
             int h = st2.calc(tin[a], tin[b]+1);
-            //cout << h << "\n";
             cout << (st.calc(0, start[a]+1) ^ st.calc(0, start[b]+1) ^ val[h]) << "\n";
         }   
     }
