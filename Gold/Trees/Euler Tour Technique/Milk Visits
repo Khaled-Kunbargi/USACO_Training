@@ -1,0 +1,66 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+
+const int N = 100001;
+vi adj[N];
+int st[N], en[N], timer=0, val[N], wanted[N];
+void dfs(int x, int y=-1){
+    st[x] = timer++;
+    for(int &i: adj[x]){
+        if(i != y) dfs(i, x);
+    }
+    en[x] = timer-1;
+}
+bool anc(int a, int b){ return st[a] <= st[b] && en[a] >= en[b]; }
+vi ord, todo[N];
+vector<pi> vis[N];
+pi dat[N];
+bool ans[N];
+void dfs2(int x, int p=-1){
+    vis[val[x]].pb({x, ord.size()});  ord.pb(x);
+    for(int &j: todo[x]) if(vis[wanted[j]].size()) {
+        auto [node, dep] = vis[wanted[j]].back();
+        if(node == x) ans[j] = 1;
+        else{
+            int Y = ord[dep+1];
+            assert(x == dat[j].f || x == dat[j].s);
+            if(!anc(Y, dat[j].f+dat[j].s-x)) ans[j] = 1;
+        }
+    }   
+    for(int &i: adj[x]){ if(i != p) dfs2(i, x); }
+    vis[val[x]].pop_back();
+    ord.pop_back();
+}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("milkvisits.in", "r", stdin);
+    freopen("milkvisits.out", "w", stdout);    
+    int n, m; cin >> n >> m;
+    for(int i=1; i<=n; ++i) cin >> val[i];
+    for(int i=0; i<n-1; ++i){
+        int a, b; cin >> a >> b;
+        adj[a].pb(b);
+        adj[b].pb(a);
+    }
+    dfs(1);
+    for(int i=0; i<m; ++i){
+        cin >> dat[i].f >> dat[i].s >> wanted[i];
+        todo[dat[i].f].pb(i);
+        todo[dat[i].s].pb(i);
+    }
+    dfs2(1);
+    for(int i=0; i<m; ++i){ 
+        if(ans[i]) cout << 1;
+        else cout << 0;
+    }
+    return 0;   
+}
