@@ -1,0 +1,93 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+
+const int N = 100001;
+vi adj[N];
+int st[N], en[N], timer=0;
+void dfs(int x, int y=-1){
+    st[x] = timer;
+    for(int &i: adj[x]){
+        if(i != y) dfs(i, x);
+    }
+    en[x] = timer++;
+}
+bool cmp(const pi &a, const pi &b){return a.f > b.f;}
+
+/*
+5
+804289384
+846930887
+681692778
+714636916
+957747794
+1
+1
+2
+3
+*/
+
+template <class t> struct BIT {
+    int size;
+    vector <t> bit;
+    BIT(int n): size(n), bit(n+1) {}
+    void update(int x, int v){
+        x++;
+        while(x <= size){
+            bit[x] += v;
+            x += x&-x;
+        }
+    }
+    t sum(int k){
+        k++;
+        t res = 0;
+        while(k > 0){
+            res += bit[k];
+            k -= k&-k;
+        }
+        return res;
+    }
+};
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("promote.in", "r", stdin);
+    freopen("promote.out", "w", stdout);    
+    int n; cin >> n;
+    vector<pi> a(n+1);
+    for(int i=0; i<n; ++i){ 
+        cin >> a[i].f;
+        a[i].s = i;
+    }
+    for(int i=1; i<n; ++i){
+        int a; cin >> a;
+        adj[--a].pb(i);
+        adj[i].pb(a);
+    }
+    sort(all(a), cmp);
+    dfs(0);
+    BIT <int> bit(n+1);
+    // for(int i=1; i<=n; ++i){
+    //     cout << st[i] << ' ' << en[i] << "\n";
+    // }
+    vi ans(n+1);
+    for(int i=0; i<n; ++i){
+        int r = i;
+        while(r < n && a[r].f == a[i].f){
+            ans[a[r].s] = bit.sum(en[a[r].s]) - bit.sum(st[a[r].s]-1);
+            r++;
+        }
+        for(int j=i; j<r; ++j){
+            bit.update(en[a[j].s], 1);
+        }
+    }
+    for(int i=0; i<n; ++i) cout << ans[i] << '\n';
+    return 0;   
+}
