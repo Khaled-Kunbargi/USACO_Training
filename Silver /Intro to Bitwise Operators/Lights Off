@@ -1,0 +1,82 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+
+/*
+4 3
+101 100
+0: 100
+1: 010
+2: 001
+
+light = 101
+switch = 100
+
+switch = 101 = 100^(1<<0)
+light = light ^ switch = 101^100^(1<<0) = 0
+
+light = 101^100
+^(1<<0)
+*/
+
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("walk.in", "r", stdin);
+    // freopen("walk.out", "w", stdout);    
+    int t, n; cin >> t >> n;
+    vector <vi> placements(n+1, vi(n));
+    for(int moves=1; moves<=n;++moves){
+        int msk =(1<<moves)-1;
+        msk = msk << (n-moves);
+        placements[moves][n-1] = msk;
+        for(int p=1; p<n; ++p){
+            msk = (msk >> 1) + (1<<(n-1))*(msk&1);
+            placements[moves][n-p-1] = msk;
+        }
+    }
+    vector <vi> dp(n+1, vi((1 << n )+1));
+    dp[0][0] = 1;
+    for(int msk=1; msk < 1<<n; ++msk){
+        dp[0][msk] = 0;
+    }
+    for(int movesleft=1; movesleft<=n; ++movesleft){
+        for(int msk=0; msk < 1<<n; ++msk){
+            for(int i=0; i<n; ++i){
+                if(dp[movesleft-1][msk ^ placements[movesleft][i]]){
+                    dp[movesleft][msk] = 1;
+                    break;
+                }
+            }
+        }
+    }
+    while(t--){
+        string a, b; cin >> a >> b;
+        int lights=0, switches=0;
+        for(int i=0; i<n; ++i){
+            if(a[i]=='1') lights += (1 << n-1-i);
+            if(b[i]=='1') switches += (1 << n-1-i);
+        }
+        if(lights == 0){
+            cout << 0 << "\n"; continue;
+        }
+        int cur = switches ^ lights;
+        int c=1;
+        while(true){
+            if(dp[c][cur]){
+                cout << c << "\n"; break;
+            }
+            switches = (switches>>1) + (1<<(n-1))*(switches&1);
+            cur = cur ^ switches;
+            c++;
+        }
+    }
+    return 0;   
+}
