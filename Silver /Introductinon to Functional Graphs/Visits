@@ -1,0 +1,50 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+
+const int N = 100001;
+vi radj[N];
+int v[N], succ[N], in_cycle[N], vis[N];
+ll ans = 0;
+
+void mark(int node){
+    if(vis[node]) return;
+    vis[node] = 1;
+    for(int i: radj[node]) mark(i);
+}
+int mn_cost(int x){
+    int a = succ[x], b = succ[a];
+    while(a != b){
+        a = succ[a]; b = succ[succ[b]];
+    }
+    mark(a);
+    int mn = v[a]; b = succ[b];
+    while(a != b){
+        mn = min(mn, v[b]);
+        b = succ[b];
+    }
+    return mn;
+}
+int main() {
+    // ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("walk.in", "r", stdin);
+    // freopen("walk.out", "w", stdout);    
+    int n; cin >> n;
+    for(int i=0; i<n; ++i){
+        cin >> succ[i] >> v[i];
+        radj[--succ[i]].pb(i);
+        ans += v[i];
+    }
+    for(int i=0; i<n; ++i){
+        if(!vis[i]) ans -= mn_cost(i);
+    }
+    cout << ans;
+    return 0;   
+}
