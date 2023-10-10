@@ -1,0 +1,39 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+
+const int N = 200009, m = 1e9+7;
+vi adj[N];
+ll dp[N][2];
+void dfs(int node, int pa){
+    for(int i: adj[node]){
+        if(i != pa){
+            dfs(i, node);
+            dp[node][0] *= (dp[i][0] + dp[i][1]); dp[node][0] %= m;
+            dp[node][1] *= dp[i][0]; dp[node][1] %= m;
+        }
+    }
+}
+int main() {
+    // ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("walk.in", "r", stdin);
+    // freopen("walk.out", "w", stdout);    
+    int n; cin >> n;
+    for(int i=0; i<n-1; ++i){
+        int a, b; cin >> a >> b;
+        adj[a].pb(b); adj[b].pb(a);
+    }
+    for(int i=1; i<=n; ++i){
+        dp[i][0] = dp[i][1] = 1;
+    }
+    dfs(1, 0);
+    cout << (dp[1][0] + dp[1][1])%m << "\n";
+    return 0;       
+}
