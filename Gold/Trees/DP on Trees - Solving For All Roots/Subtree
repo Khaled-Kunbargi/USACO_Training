@@ -1,0 +1,62 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+
+const int N = 100001;
+int m, n;
+vector <int> adj[N];
+ll val[N], dp[N];
+
+void dfs1(int node=1, int pa=0){
+    for(int i: adj[node]){
+        if(i == pa) continue;
+        dfs1(i, node);
+        val[node] = (val[node]%m) * ((val[i]+1)%m) % m;
+    }
+}
+void dfs2(int node=1, int pa=0){
+    int sz = adj[node].size();
+    vi suff(sz+1, 1), pref(sz+1, 1);
+    for(int i=0; i<sz; ++i){
+        int v = adj[node][i];
+        pref[i+1] = pref[i] * (val[v]+1) % m;
+    }
+    for(int i=sz-1; i>=0; --i){
+        int v = adj[node][i];
+        suff[i] = suff[i+1] * (val[v]+1) % m;
+    }
+    int j=0;
+    for(int i: adj[node]){
+        if(i == pa){ j++; continue; }
+        dp[i] = (val[i] * (1+pref[j]*suff[j+1]%m)%m)%m; 
+        ll x = val[node];
+        val[node] = pref[j]*suff[j+1]%m;
+        dfs2(i, node);
+        val[node] = x;
+        j++;
+    }   
+}
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("barnpainting.in", "r", stdin);
+    // freopen("barnpainting.out", "w", stdout);    
+    cin >> n >> m;
+    for(int i=1; i<n; ++i){
+        int a, b; cin >> a >> b;
+        adj[a].pb(b); adj[b].pb(a);
+    }
+    for(int i=1; i<=n; ++i) val[i] = 1;
+    dfs1();
+    val[0] = -1;
+    dp[1] = val[1];
+    dfs2();
+    for(int i=1; i<=n; ++i) cout << dp[i] << "\n";
+    return 0;       
+}
