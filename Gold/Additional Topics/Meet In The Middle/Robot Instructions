@@ -1,0 +1,56 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+
+vector <pair<pi,int>> all_subsets(const vector <pi> &a){
+    vector <pair<pi,int>> v{{}};
+    for(const auto &[x, y]: a){
+        v.resize(2*v.size());
+        for(int i=0; i<v.size()/2; ++i){
+            v[i + v.size()/2] = {{v[i].f.f + x, v[i].f.s + y}, v[i].s + 1};
+        }
+    }
+    sort(all(v));
+    return v;
+}
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("5.in", "r", stdin);
+    // freopen("barnpainting.out", "w", stdout);        
+    int n; cin >> n;
+    int tx, ty; cin >> tx >> ty;
+    vector <pi> dirs(n);
+    for(auto &i: dirs) cin >> i.f >> i.s;
+    vector <pair<pi, int>> a = all_subsets(vector<pi>(begin(dirs), begin(dirs)+n/2));
+    vector <pair<pi, int>> b = all_subsets(vector<pi>(begin(dirs)+n/2, end(dirs)));
+    reverse(all(b));
+    int ib=0;
+    pi rest_prev = {1e18, 1e18};
+    vi ans(n+1);
+    vi with_num;
+    for(const auto &[P, sz]: a){
+        auto [x, y] = P;
+        pi rest = {tx-x, ty-y};
+        //cout << x << ' ' << y << ' ' << sz << "\n";
+        if(rest != rest_prev){
+            rest_prev = rest;
+            with_num.assign(n - n/2+1, 0);
+            for(; ib < b.size() && b[ib].f > rest; ++ib);
+            for(; ib < b.size() && b[ib].f == rest ; ++ib) with_num[b[ib].s]++;
+        }
+        for(int i=0; i<with_num.size(); ++i){
+            ans[i + sz] += with_num[i];
+        }
+    }
+    for(int i=1; i<=n; ++i) cout << ans[i] << '\n';
+    return 0;       
+}   
