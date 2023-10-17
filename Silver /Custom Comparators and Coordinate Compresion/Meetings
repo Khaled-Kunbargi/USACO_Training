@@ -1,0 +1,65 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e18
+#define all(x) (x).begin(), (x).end()
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+
+struct cow{
+    int weight, pos, d;
+};
+bool cmp(const cow &a, const cow &b){
+    return a.pos < b.pos;
+}
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("meetings.in", "r", stdin);
+    freopen("meetings.out", "w", stdout);        
+    int n, l; cin >> n >> l;
+    vector<cow> v(n);
+    int total_weight = 0;
+    for(int i=0; i<n; ++i){
+        cin >> v[i].weight >> v[i].pos >> v[i].d;
+        total_weight += v[i].weight;
+    }
+    sort(all(v), cmp);
+    vector <cow> left, right;
+    for(auto c: v){
+        if(c.d == -1) left.pb(c);
+        else right.pb(c);
+    }
+    vector <pi> weight_times;
+    for(int c=0; c<left.size(); ++c){
+        weight_times.pb({left[c].pos, v[c].weight});
+    }
+    for(int c=0; c<right.size(); ++c){
+        weight_times.pb({l - right[c].pos, v[left.size() + c].weight});
+    } 
+    sort(all(weight_times));
+    int end_time=-1;
+    for(const auto &[time, weight]: weight_times){
+        total_weight -= 2*weight;
+        if(total_weight <= 0){
+            end_time = time;
+            break;
+        }
+    }
+    queue <int> q;
+    int ans=0;
+    for(int c=0; c<n; ++c){
+        if(v[c].d == 1){
+            q.push(v[c].pos);
+        }else{
+            while(!q.empty() && q.front() + 2*end_time < v[c].pos) q.pop();
+            ans += q.size();
+        }
+    }
+    cout << ans; 
+    return 0;       
+}   
