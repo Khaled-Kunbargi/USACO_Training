@@ -47,3 +47,58 @@ int main(){
     cout << ans;
     return 0;
 }
+// My own solution: 
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <ll,ll> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e18
+#define all(x) (x).begin(), (x).end()
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+
+bool cmp(const pi &a, const pi &b){return a.s < b.s;}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("split.in", "r", stdin);
+    // freopen("split.out", "w", stdout);        
+    int n; cin >> n; 
+    vector <pi> v(n);
+    for(auto &i: v) cin >> i.f >> i.s;
+    sort(all(v));
+    vi mx(n+1, -OO), mn(n+1, OO);
+    for(int i=n-1; i>=0; --i){
+        mn[i] = min(mn[i+1], v[i].s);
+        mx[i] = max(mx[i+1], v[i].s);
+    }
+    ll ans=OO;
+    ll cmn=OO, cmx=-OO;
+    for(int i=0; i<n-1; ++i){
+        cmn = min(cmn, v[i].s); cmx = max(cmx, v[i].s);
+        if(!i) continue;
+        ll rec1 = (v[i].f - v[0].f)*(cmx - cmn);
+        ll rec2 = (v[n-1].f - v[i+1].f) * (mx[i+1] - mn[i+1]);
+        ans = min(ans,  rec1+rec2);
+    }
+    sort(all(v), cmp);
+    mn.assign(n+1, OO); mx.assign(n+1, -OO);
+    for(int i=n-1; i>=0; --i){
+        mn[i] = min(mn[i+1], v[i].f);
+        mx[i] = max(mx[i+1], v[i].f);
+    }
+    cmn = OO, cmx = -OO;
+    for(int i=0; i<n-1; ++i){
+        cmn = min(cmn, v[i].f); cmx = max(cmx, v[i].f);
+        if(!i) continue;
+        ll rec1 = (v[i].s - v[0].s) * (cmx - cmn);
+        ll rec2 = (v[n-1].s - v[i+1].s) * (mx[i+1] - mn[i+1]);
+        ans = min(ans, rec1 + rec2);
+    }
+    cout << (cmx - cmn) * (v[n-1].s - v[0].s) - ans;
+    return 0;       
+}   
