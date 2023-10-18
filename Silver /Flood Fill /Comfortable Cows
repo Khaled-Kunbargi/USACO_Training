@@ -1,0 +1,53 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+
+const int N = 3000;
+queue <pi> q;
+int total=0;
+bool vis[N][N];
+int dx[4]{0, 0, 1, -1}, dy[4]{1, -1, 0, 0};
+void see_neighbors(int x, int y){
+    if(!vis[x][y]) return;
+    int adj_num=0;
+    for(int i=0; i<4; ++i){
+        adj_num += vis[x+dx[i]][y+dy[i]];
+    }
+    if(adj_num != 3) return;
+    for(int i=0; i<4; ++i){
+        pi nxt{x+dx[i], y+dy[i]};
+        q.push(nxt);
+    }
+}
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("snowboots.in", "r", stdin);
+    // freopen("snowboots.out", "w", stdout);        
+    int n; cin >> n;
+    for(int i=1; i<=n; ++i){
+        pi p; cin >> p.f >> p.s; 
+        p.f += 1000; p.s += 1000;
+        q.push(p);
+        while(!q.empty()){
+            pi cur = q.front(); q.pop();
+            if(vis[cur.f][cur.s]) continue;
+            ++total; vis[cur.f][cur.s] = 1;
+            see_neighbors(cur.f, cur.s);
+            for(int j=0; j<4; ++j){
+                see_neighbors(cur.f + dx[j], cur.s+dy[j]);
+            }
+        }
+        cout << total - i << "\n";
+    }
+
+    return 0;       
+}   
