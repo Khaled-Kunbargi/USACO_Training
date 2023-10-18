@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("snowboots.in", "r", stdin);
+    freopen("snowboots.out", "w", stdout);        
+    int n, b; cin >> n >> b;
+    multiset <pi> ms;
+    for(int i=0; i<n; ++i){
+        int x; cin >> x; 
+        ms.insert({x,i});
+    }
+    vector <array<int,3>> q;
+    vector <bool> ans(n);
+    for(int i=0; i<b; ++i){
+        int mx, d; cin >> mx >> d;
+        q.pb({mx, d, i});
+    }
+    sort(all(q)); 
+    set <int> indices{0, n-1};
+    multiset <int> mx_dist{n-1};
+    auto l = ms.begin();
+    for(int i=0; i<b; ++i){
+        int mx = q[i][0], d = q[i][1];
+        auto r = ms.lower_bound({mx+1, 0});
+        // cout << mx << ' ' << d << '\n';
+        for(; l != r && (r == ms.end() || (*r).f > (*l).f); ++l){
+            if(indices.count((*l).s)) continue; 
+            indices.insert((*l).s);
+            //cout << (*l).s << " ";
+            auto j = indices.find((*l).s);
+            if(j == indices.begin()) continue;
+            // for(int i: indices) cout << i <<  ' ';
+            // cout << "\n";
+            // cout << *prev(j) << ' ' <<  *next(j) << "\n";
+            mx_dist.erase(mx_dist.find(*next(j)-*prev(j)));
+            mx_dist.insert(*j - *prev(j));
+            mx_dist.insert(*next(j) - *j);
+            // for(int i: mx_dist) cout << i << ' ';
+            // cout << "\n";
+        }
+        //cout << "\n";
+        ans[q[i][2]] = (*mx_dist.rbegin() <= d);
+    }
+    for(int i=0; i<b; ++i) cout << ans[i] << '\n';
+    return 0;       
+}   
