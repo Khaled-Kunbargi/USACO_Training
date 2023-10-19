@@ -1,0 +1,89 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+
+/*
+I want to solve this problem myself.
+Take advantage of this note.
+Number of pairs of numbers: O(n^4)
+Number of egdes with different endpoints: O(n^2*4)
+*/
+
+const int N = 250;
+int a[N][N], cellid[N][N];
+int global_regid;
+struct graph {
+    map <int,set<int>> out_edges;
+    map <int,int> nodesize, regid;
+    map <int,int> regsize;
+};  
+map <int,graph> g1;
+map <pi, graph> g2;
+void add_edge(graph &g, int node1, int node2){
+    g.out_edges[node1].insert(node2);
+    g.out_edges[node2].insert(node1);
+    g.nodesize[node1] = g.nodesize[node2] = 1;
+}
+void add_g2_edge(int i1, int j1, int i2, int j2){
+    int b1 = a[i1][j1], b2= a[i2][j2], c1 = cellid[i1][j1], c2 =cellid[i2][j2];
+    if(b1 > b2){swap(b1, b2); swap(c1, c2);}
+    int r1 = g1[b1].regid[c1], r2 = g1[b2].regid[c2];
+    pi p = make_pair(b1, b2);
+    add_edge(g2[p], r1, r2);
+    g2[p].nodesize[r1] = g1[b1].regsize[r1];
+    g2[p].nodesize[r2] = g1[b2].regsize[r2];
+}
+int visit(graph &g, int nodeid, int regid){
+    if(g.regid.count(nodeid) > 0) return 0;
+    g.regid[nodeid] = regid;
+    int a = g.nodesize[nodeid];
+    for(int nb: g.out_edges[nodeid])
+        a += visit(g, nb, regid);
+    g.regsize[regid] = a;
+    return a;
+}
+int largest_region(graph &g){
+    int m=0;
+    for(auto &p: g.out_edges) m = max(m, visit(g, p.f, ++global_regid));
+    return m;
+}
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("multimoo.in", "r", stdin);
+    freopen("multimoo.out", "w", stdout);        
+    int n; cin >> n;
+    for(int i=0; i<n; ++i){
+        for(int j=0; j<n; ++j){ 
+            cin >> a[i][j];
+            cellid[i][j] = i*n + j;
+        }
+    }
+    for(int i=0; i<n; ++i)
+        for(int j=0; j<n; ++j){
+            add_edge(g1[a[i][j]], cellid[i][j], cellid[i][j]);
+            if(i+1<n && a[i][j] == a[i+1][j]) add_edge(g1[a[i][j]], cellid[i][j], cellid[i+1][j]);
+            if(j+1<n && a[i][j] == a[i][j+1]) add_edge(g1[a[i][j]], cellid[i][j], cellid[i][j+1]);
+        }
+
+    int ans1=0;
+    for(auto &p: g1) ans1 = max(ans1, largest_region(p.s));
+    
+    for(int i=0; i<n; ++i)
+        for(int j=0; j<n; ++j){
+            if(i+1<n && a[i][j] != a[i+1][j]) add_g2_edge(i, j, i+1, j);
+            if(j+1<n && a[i][j] != a[i][j+1]) add_g2_edge(i, j, i, j+1);
+        }
+    int ans2=0;
+    for(auto &p: g2) ans2 = max(ans2, largest_region(p.s));
+    cout << ans1 << "\n" << ans2;
+    return 0;       
+}   
