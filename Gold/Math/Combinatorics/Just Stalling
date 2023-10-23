@@ -30,3 +30,39 @@ int main() {
     cout << p;
     return 0;
 } 
+/* Another Solution...
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+//#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+ 
+const int m = 1e9+7;
+int main() {
+    // ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("multimoo.in", "r", stdinx);
+    // freopen("multimoo.out", "w", stdout);        
+    int n; cin >> n;
+    vi a(n), b(n);
+    for(int &i: a) cin >> i;
+    for(int &i: b) cin >> i;
+    sort(a.rbegin(), a.rend());
+    sort(all(b));
+    ll ans = 1;
+    for(int i=0; i<n; ++i){
+        int l = lower_bound(all(b), a[i])-b.begin();
+        if(a[i] > b.back()){ans =0; break;}
+        ans *= (b.size()-l);
+        b.pop_back();
+    }
+    cout << ans;
+    return 0;       
+}   
+*/
