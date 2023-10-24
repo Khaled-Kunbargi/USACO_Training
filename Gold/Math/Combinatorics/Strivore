@@ -54,3 +54,53 @@ int main() {
 
     return 0;
 }  
+/* My own solution: 
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+//#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+ 
+const int m = 1e9+7, N = 2e6+10;
+ll fact[N], inv[N];
+ll exp(ll b, ll p){
+    ll res = 1;
+    b %= m;
+    while(p > 0){
+        if(p & 1) res = res*b%m;
+        b = b*b%m;
+        p /= 2;
+    }
+    return res;
+}
+ll choose(ll n, ll k){   
+    if(n < k) return 0LL;
+    return (fact[n]*exp(fact[n-k], m-2)% m) * exp(fact[k], m-2) % m;
+}
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("multimoo.in", "r", stdinx);
+    // freopen("multimoo.out", "w", stdout);     
+    fact[0] = 1;
+    for(int i=1; i<N; ++i) fact[i] = i * fact[i-1] % m;
+    for(int i=0; i<N; ++i) inv[i] = exp(fact[i], m-2);
+    int k; cin >> k;
+    string str; cin >> str;
+    int n = str.size();
+    ll ans = 0;
+    for(int i=0, after_num=k; i<=k; ++i, after_num--){
+        ll x = exp(26, after_num) *  choose(n+k-after_num-1, n-1) % m;
+        x *= exp(25,k-after_num);  x %= m;
+        ans += x; ans %= m;
+    }
+    cout << ans;
+    return 0;       
+}   
+*/
