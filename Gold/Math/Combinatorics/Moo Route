@@ -1,0 +1,48 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+
+const int m = 1e9+7, N = 1e6+10;
+ll fact[N], inv[N];
+ll choose(ll n, ll k){
+    if(n == k || k == 0) return 1;
+    return (((fact[n] * inv[n-k]) % m) * (inv[k] % m))%m;
+}
+ll exp(ll b, ll p){
+    b %= m;
+    ll res =1;
+    while(p > 0){
+        if(p & 1) res = res * b%m;
+        b = b * b % m;
+        p /= 2;
+    }
+    return res;
+}
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("16.in", "r", stdin);
+    // freopen("multimoo.out", "w", stdout);    
+    fact[0] = 1;
+    for(int i=1; i<N; ++i) fact[i] = i * fact[i-1] % m;
+    for(int i=1; i<N; ++i) inv[i] = exp(fact[i], m-2);
+    int n; cin >> n;
+    vi a(n+1);
+    for(int &i: a){ cin >> i; i /= 2; }
+    ll ans = 1;
+    for(int i=0; i+1<n; ++i){
+        if(a[i] >= a[i+1]) ans *= choose(a[i], a[i+1]);
+        else ans *= choose(a[i+1]-1, a[i]-1);
+        ans %= m;
+    }
+    cout << ans;
+    return 0;       
+}   
