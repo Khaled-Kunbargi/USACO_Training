@@ -1,0 +1,48 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+
+const int m = 1e9+7, N = 1e6;
+ll fact[N], inv[N];
+ll choose(ll n, ll k){
+    if(n == k || k == 0) return 1;
+    return (((fact[n] * inv[n-k]) % m) * (inv[k] % m))%m;
+}
+ll exp(ll b, ll p){
+    b %= m;
+    ll res =1;
+    while(p > 0){
+        if(p & 1) res = res * b%m;
+        b = b * b % m;
+        p /= 2;
+    }
+    return res;
+}
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("help.in", "r", stdin);
+    freopen("help.out", "w", stdout);    
+    int n; cin >> n;
+    vi a(2*n+1);
+    for(int i=0;i<n; ++i){
+        int l, r; cin >> l >> r;
+        a[l]++, a[r]--;
+    }
+    int open_segments = 0;
+    ll ans =0;
+    for(int i=1; i<=2*n; ++i){
+        open_segments += a[i];
+        if(a[i] == 1) ans = (ans + exp(2, n-open_segments))%m;
+    }
+    cout << ans;
+    return 0;       
+}   
