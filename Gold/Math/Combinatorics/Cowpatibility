@@ -49,3 +49,59 @@ int main() {
 
     return 0;
 }  
+/* My own solution....
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+
+const int m = 1e9+7, N = 1e6;
+ll fact[N], inv[N];
+ll choose(ll n, ll k){
+    if(n == k || k == 0) return 1;
+    return (((fact[n] * inv[n-k]) % m) * (inv[k] % m))%m;
+}
+ll exp(ll b, ll p){
+    b %= m;
+    ll res =1;
+    while(p > 0){
+        if(p & 1) res = res * b%m;
+        b = b * b % m;
+        p /= 2;
+    }
+    return res;
+}
+map <int, bitset <50000>> flavors;
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("cowpatibility.in", "r", stdin);
+    freopen("cowpatibility.out", "w", stdout);    
+    ll n; cin >> n;
+    vector <array<int,5>> v(n);
+    for(int i=0; i<n; ++i){
+        for(int j=0; j<5; ++j){ 
+            cin >> v[i][j];
+            v[i][j]--;
+            flavors[v[i][j]][i] = 1;
+        }
+    }
+    ll compatible = 0;
+    for(int i=0; i<n; ++i){
+        bitset <50000> cur;
+        for(int j=0; j<5; ++j){
+            cur |= flavors[v[i][j]];
+        }
+        compatible += (cur.count()-1);
+    }
+    cout << (n*(n-1) - compatible)/2;
+    return 0;       
+}   
+*/
