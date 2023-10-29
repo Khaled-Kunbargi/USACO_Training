@@ -107,3 +107,56 @@ int main() {
     return 0;
 }  
 */
+/* My own solution... 
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+ 
+const int N = 110;
+deque <int> a;
+int n,k; 
+ll memo[N][10];
+ll dp(int i, int j){
+    if(i >= n) return 0;
+    if(j > k) return OO;
+    ll &ret = memo[i][j];
+    if(ret != OO) return ret;
+    ll sum=0;
+    for(int ind=i, c=0; ind < n-(k-j); ++ind, ++c){
+        sum += a[ind]*c;
+        ret = min(ret, sum+dp(ind+1, j+1));
+    }
+    return ret;
+}
+void init(){
+    for(int i=0; i<n; ++i){
+        for(int j=0; j<10; ++j) memo[i][j]=OO;
+    }
+}
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("cbarn2.in", "r", stdin);
+    freopen("cbarn2.out", "w", stdout);
+    cin >> n >> k;
+    a.resize(n);
+    for(int i=0;i <n; ++i) cin >> a[i];
+    ll ans=OO;
+    for(int i=0; i<n; ++i){
+        init();
+        ans = min(ans, dp(0, 1));
+        a.pb(a.front());
+        a.pop_front();
+    }
+    cout << ans;
+    return 0;       
+}   
+*/
