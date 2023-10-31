@@ -1,0 +1,44 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+ 
+const int m = 998244353, N = 110, mx=1e6+10;
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("help.in", "r", stdin);
+    // freopen("help.out", "w", stdout);    
+    int q,k; cin >> q >> k;
+    vi dp(k+1);
+    multiset <int> cur;
+    dp[0]=1;
+    while(q--){
+        char tp; cin >> tp;
+        int x; cin >> x;
+        if(tp=='+'){
+            cur.insert(x);
+            for(int i=k; i>=0; --i){
+                if(i-x >= 0) dp[i] += dp[i-x]; 
+                dp[i] %= m;
+            }
+        }else{
+            for(int i=0; i<=k; ++i){
+                if(i-x >= 0) dp[i] -= dp[i-x];
+                dp[i] += m;
+                dp[i] %= m;
+            }
+            cur.erase(cur.find(x));
+        }
+        cout << dp[k] << "\n";
+    }
+    return 0;      
+}
