@@ -40,3 +40,57 @@ int main() {
 
     return 0;
 } 
+/*
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO INT_MAX
+#define all(x) (x).begin(), (x).end()
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+ 
+const int m = 1e9+7, N = 510, max_sum=126000;
+
+bitset <126000> possible;
+int y, n;
+ll memo[max_sum][N];
+ll exp(ll b, ll p){
+    b %= m;
+    ll res = 1;
+    while(p > 0){
+        if(p & 1) res = res * b %  m;
+        b =  b*b % m;
+        p /= 2;      
+    }
+    return res%m;
+}
+int dp(int sum, int i){
+    if(i >= n) return sum==y/2;
+    ll &ret = memo[sum][i];
+    if(ret != -1) return ret;
+    ret = 0;
+    ret = (ret + dp(sum+i, i+1))%m; 
+    ret = (ret + dp(sum, i+1))%m;
+    return ret;
+}
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    // freopen("help.in", "r", stdin);
+    // freopen("help.out", "w", stdout);    
+    for(int i=0; i<max_sum; ++i){
+        for(int j=0; j<N; ++j) memo[i][j]=-1;
+    }
+    cin >> n;  
+    y = n*(n+1)/2;
+    if(y & 1){
+        cout << "0\n";return 0;
+    }
+    cout << dp(0, 0)*exp(2, m-2) % m;
+    return 0;      
+}
+*/
