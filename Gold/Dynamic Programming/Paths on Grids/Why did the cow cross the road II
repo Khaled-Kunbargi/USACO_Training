@@ -1,0 +1,45 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef vector <ll> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e18
+#define all(x) (x).begin(), (x).end()
+#define no cout << "NO\n"z
+#define yes cout << "YES\n"
+ 
+const int m = 1e9+7,N =1e3+10, mx=2e6+1;    
+int a[N], b[N],n, memo[N][N];
+int dp(int i, int j){
+    if(max(i,j) >= n) return 0; 
+    int &ret=memo[i][j];
+    if(ret != -1) return ret;
+    if(abs(a[i]-b[j]) <= 4)
+        ret = max(ret, 1+dp(i+1,j+1));
+    ret = max(ret, dp(i+1, j));
+    ret = max(ret, dp(i, j+1));
+    return ret;
+}
+int main() {    
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("nocross.in", "r", stdin);
+    freopen("nocross.out", "w", stdout);  
+    for(int i=0; i<N; ++i) for(int j=0; j<N; ++j){
+        memo[i][j]=-1;
+    } 
+    cin >> n;
+    for(int i=0; i<n; ++i) cin >> a[i];
+    for(int i=0; i<n; ++i) cin >> b[i];
+    cout << dp(0,0);
+    return 0;     
+}
+/* stuff you should look for
+    * visualize !
+	* int overflow, array bounds
+	* special cases (n=1?), slow multiset operations
+    * reversing the problem
+	* do smth instead of nothing and stay organized
+*/
