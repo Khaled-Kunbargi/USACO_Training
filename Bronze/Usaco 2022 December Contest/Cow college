@@ -1,1 +1,25 @@
-Hello
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+typedef vector <int> vi;
+typedef long long ll;
+#define pb push_back
+const int N = 1e5+10;
+int sz(int x){return log10(x)+1;}
+
+int32_t main() {        
+    ios::sync_with_stdio(0); cin.tie(0);
+    int n; cin >> n;
+    vi a(n);
+    for(int &i: a) cin >> i;
+    sort(a.begin(), a.end());
+    int mx=-1,ans=-1;
+    for(int i=0; i<n; ++i){
+        if(a[i] * (n-i) > mx){
+            mx = a[i]*(n-i);
+            ans = a[i];
+        }
+    }
+    cout << mx << " " << ans << "\n";
+    return 0;     
+}
