@@ -1,0 +1,37 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+typedef vector <int> vi;
+typedef long long ll;
+#define pb push_back
+const int N = 1e5+10;
+
+void solve(){
+    int n, k, c=0; cin >> n >> k;
+    string ans(n,'.'), a;
+    cin >> a;
+    if(!k){ cout << n << "\n" << a << "\n"; return;}
+    for(int i=0; i<n; ++i){
+        if(a[i] == 'H') continue;
+        i += k;
+        ans[min(n-1,i)] = 'G'; ++c;
+        i += k;   
+    }
+    for(int i=0; i<n; ++i){
+        if(a[i] == 'G') continue;
+        i += k;
+        if(ans[min(n-1,i)] == 'G'){
+            ans[min(n-1,i)-1] = 'H'; ++c;
+        }else {
+            ans[min(n-1,i)] = 'H'; ++c;
+        }
+        i += k;
+    }
+    cout << c << "\n" << ans << "\n";
+}
+int32_t main() {        
+    ios::sync_with_stdio(0); cin.tie(0);
+    int t; cin >> t;
+    while(t--) solve();
+    return 0;     
+}
