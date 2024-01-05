@@ -1,0 +1,54 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long 
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define f first
+#define s second
+#define OO 1e18
+#define all(x) (x).begin(), (x).end()
+#define rep(i , x , n ) for(int i = x ; i < n ; i++ ) 
+#define For(i,n) rep(i,0,n)
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+#define ter cout << "LIE\n"; return
+const int N = 110, mod = 1e9+7;
+const int dx[] = {0,0,1,-1}, dy[] =  {1,-1,0,0};
+
+void tr(int a,int b){cout << a << " " << b << "\n";}    
+int st[N], en[N],a[N], b[N], m[N], p[N], need[N];
+void solve(){
+    int n,con; cin >> n >> con; 
+    For(i,n)
+        cin >> st[i] >> en[i] >> need[i];
+    For(i, con){
+        cin >> a[i] >> b[i] >> p[i] >> m[i];
+    }
+    int ans = OO;
+    for(int msk=1; msk<1<<con; ++msk){
+        int cost=0; vi temp(N);
+        For(j, con){
+            if((1<<j)&msk){
+                for(int i=a[j]; i<=b[j]; ++i) temp[i]+=p[j];
+                cost += m[j];
+            }
+        }
+        bool fl = 1;
+        For(i, n){
+            for(int j=st[i]; j<=en[i]; ++j) if(temp[j] < need[i]) fl = 0;
+        } 
+        if(fl) ans = min(ans, cost);
+    }
+    cout << ans << "\n";
+}
+int32_t main() {            
+    ios::sync_with_stdio(0); cin.tie(0);  
+    // freopen("focus!.in", "r", stdin);
+    // freopen("focus!.out", "w", stdout);     
+    int t=1;
+    //cin >> t;
+    while(t--) solve();
+    return 0;       
+} 
