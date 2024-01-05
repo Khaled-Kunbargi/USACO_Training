@@ -1,0 +1,45 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long 
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+// #define f first
+// #define s second
+#define OO 1e18
+#define all(x) (x).begin(), (x).end()
+#define rep(i , x , n ) for(int i = x ; i < n ; i++ ) 
+#define For(i,n) rep(i,0,n)
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+#define ter no; return
+const int N = 30, mod = 1e9+7;
+const int dx[] = {0,0,1,-1}, dy[] =  {1,-1,0,0};
+
+void tr(int a,int b){cout << a << " " << b << "\n";}    
+string a[N], ans[N];
+
+void solve(){
+    int n,k; cin >> n >> k;
+    vi a(n), bought(n);
+    for(int &i: a) cin >> i;
+    int ans=0;
+    For(i,n){
+        int j = upper_bound(all(a), a[i]+k)-a.begin()-1;  
+        if(i!=j) bought[j] = 1;
+        if(bought[i]) ans += a[j]-a[i];
+        else ans += k+a[j]-a[i]+1;
+        if(i != j) i = j-1;
+    }
+    cout << ans << "\n";
+}
+int32_t main() {            
+    ios::sync_with_stdio(0); cin.tie(0);  
+    // freopen("focus!.in", "r", stdin);
+    // freopen("focus!.out", "w", stdout);     
+    int t=1; 
+    //cin >> t;
+    while(t--) solve();
+    return 0;       
+} 
