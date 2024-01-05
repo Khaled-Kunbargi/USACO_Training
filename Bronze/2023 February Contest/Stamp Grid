@@ -1,0 +1,78 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long 
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+// #define f first
+// #define s second
+#define OO 1e18
+#define all(x) (x).begin(), (x).end()
+#define rep(i , x , n ) for(int i = x ; i < n ; i++ ) 
+#define For(i,n) rep(i,0,n)
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+#define ter no; return
+const int N = 30, mod = 1e9+7;
+const int dx[] = {0,0,1,-1}, dy[] =  {1,-1,0,0};
+
+void tr(int a,int b){cout << a << " " << b << "\n";}    
+string a[N], ans[N];
+vector <string> f,s,t,fo;
+int n,k; 
+bool OK(vector<string> cur, int ii,int jj){
+    for(int i=ii; i<ii+k; ++i){
+        for(int j=jj; j<jj+k; ++j){
+            if(cur[i-ii][j-jj] == '*' && a[i][j] == '.') return false;
+        }
+    }
+    return true;
+}
+void stamp(vector<string> cur, int ii,int jj){
+    for(int i=ii; i<ii+k; ++i){
+        for(int j=jj; j<jj+k; ++j){
+            if(ans[i][j] == '*') continue;
+            ans[i][j] = cur[i-ii][j-jj];
+        }
+    }
+}
+void solve(){
+    cin >> n; 
+    For(i,n){ 
+        cin >> a[i];
+        ans[i].assign(n,'.');
+    }
+    cin >> k;
+    For(i,k) cin >> f[i];
+    For(j, k){
+        s[j].assign(k,'0'); int c=0;
+        for(int i=k-1; i>=0; --i) s[j][c++] = f[i][j];
+    }
+    For(j, k){
+        t[j].assign(k,'0'); int c=0;
+        for(int i=k-1; i>=0; --i) t[j][c++] = s[i][j];
+    }
+    For(j, k){
+        fo[j].assign(k,'0'); int c=0;
+        for(int i=k-1; i>=0; --i) fo[j][c++] = t[i][j];
+    }
+    For(i, n-k+1) For(j, n-k+1){
+        if(OK(f,i,j)) stamp(f,i,j);
+        if(OK(s,i,j)) stamp(s,i,j);
+        if(OK(t,i,j)) stamp(t,i,j);
+        if(OK(fo,i,j)) stamp(fo,i,j);
+    }
+    // For(i,n) cout << ans[i] << "\n";
+    For(i,n) if(ans[i] != a[i]) {ter;}
+    yes;
+}
+int32_t main() {            
+    ios::sync_with_stdio(0); cin.tie(0);  
+    // freopen("focus!.in", "r", stdin);
+    // freopen("focus!.out", "w", stdout);     
+    f.resize(N); s.resize(N); t.resize(N); fo.resize(N);
+    int t=1; cin >> t;
+    while(t--) solve();
+    return 0;       
+} 
