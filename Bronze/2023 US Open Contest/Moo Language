@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long 
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define ppb pop_back
+#define f first
+#define s second
+#define all(x) (x).begin(), (x).end()
+#define rep(i , x , n ) for(int i = x ; i < n ; i++ ) 
+#define For(i,n) rep(i,0,n)
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+#define ter no; return
+const ll OO = 1e18;
+const int N = 5e5+10, mod = 1e9+7;
+const int dx[] = {0,0,1,-1}, dy[] =  {1,-1,0,0};
+
+void tr(int a,int b){cout << a << " " << b << "\n";}    
+
+vector <string> v[5];
+void solve(){
+    For(i,5) v[i].clear();
+    int n, p, c; cin >> n >> c >> p;
+    int t = 0 , N = 0;
+    For(i,n){
+        string a, tp; cin >> a >> tp;
+        if(tp == "conjunction"){
+            v[0].pb(a);
+        }else if(tp == "transitive-verb"){
+            v[1].pb(a); ++t;
+        }else if(tp == "intransitive-verb"){
+            v[2].pb(a);
+        }else{
+            v[3].pb(a); N++;
+        }
+    }
+    int mx=0, points = p+v[0].size(); pi op{-1,-1};
+    for(int tr=0; tr<=v[1].size(); ++tr){
+        if(tr*2 > N || tr > points) continue;
+        int intr = min(N - tr*2, (int)v[2].size()), re = N-2*tr-intr;
+        int cur = points; 
+        cur -= tr;
+        int tr_words = tr*3 + (tr > 0?min(c,re):0);
+        if(tr_words + min(cur,intr)*2 > mx){
+            mx = tr * 3 + min(cur,intr)*2;
+            op = {tr,intr};
+        }
+    }
+    // cout << mx << "\n";
+    // tr(op.f,op.s);
+    cout << "\n";
+}
+int32_t main() {            
+    ios::sync_with_stdio(0); cin.tie(0);  
+    // freopen("focus!.in", "r", stdin);
+    // freopen("focus!.out", "w", stdout);     
+    int t; cin >> t;
+    while(t--) solve();
+    return 0;       
+} 
