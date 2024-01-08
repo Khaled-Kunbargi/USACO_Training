@@ -1,0 +1,82 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long 
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define ppb pop_back
+#define f first
+#define s second
+#define all(x) (x).begin(), (x).end()
+#define rep(i , x , n ) for(int i = x ; i < n ; i++ ) 
+#define For(i,n) rep(i,0,n)
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+#define ter yes; return
+const int N = 2e5+10, mod = 1e9+7, OO = 1e18;
+const int dx[] = {0,0,1,-1}, dy[] =  {1,-1,0,0};
+
+void tr(int a,int b){cout << a << " " << b << "\n";}    
+
+int a[N], ans[N];
+int n, k, t; 
+
+//Solution 1:
+int32_t main() {            
+    ios::sync_with_stdio(0); cin.tie(0);  
+    // freopen("focus!.in", "r", stdin);
+    // freopen("focus!.out", "w", stdout);     
+    cin >> n >> k >> t;
+    For(i,k) cin >> a[i];
+    vi order(n);
+    For(i,n) order[i]=i;
+    a[k] = n;
+    For(i,k){
+        rep(j,a[i],a[i+1]){
+            int t_left = t - (j-a[i]+1), dif = a[i+1]-a[i]; 
+            int pos = j;
+            if(t_left >= 0){
+                pos += dif + (t_left/dif)*dif;
+                pos %= n;
+            }
+            ans[pos] = j;
+        }
+    }
+    For(i,n) {
+        cout << ans[i];
+        if(i+1<n) cout << ' ';
+    }
+    return 0;       
+} 
+//Solution 2: More intuitive : But needs creativity: 
+int32_t main() {            
+    ios::sync_with_stdio(0); cin.tie(0);  
+    // freopen("focus!.in", "r", stdin);
+    // freopen("focus!.out", "w", stdout);     
+    cin >> n >> k >> t;
+    For(i,k) cin >> a[i];
+    vi order(n);
+    For(i,n) order[i]=i;
+    a[k] = n;
+    vi ans;
+    For(i,k){
+        //now output [a[i],a[i+1]) left shifted by t%(dif)
+        int dif = a[i+1]-a[i];
+        deque <int> d;
+        rep(j,a[i],a[i+1]) d.pb(j);
+        int c = t%dif;
+        while(c--){
+            int fr = d.front();
+            d.pop_front();
+            d.pb(fr);
+        }
+        for(int i: d) ans.pb(i);
+    }
+    t %= n;
+    For(i,n) {
+        cout << ans[(i-t+n)%n];
+        if(i+1<n) cout << ' ';
+    }
+    return 0;       
+} 
