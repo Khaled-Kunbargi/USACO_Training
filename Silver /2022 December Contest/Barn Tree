@@ -1,0 +1,62 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long 
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define ppb pop_back
+#define f first
+#define s second
+#define all(x) (x).begin(), (x).end()
+#define rep(i , x , n ) for(int i = x ; i < n ; i++ ) 
+#define For(i,n) rep(i,0,n)
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+#define ter no; return
+const int N = 2e5+10, mod = 998244353, OO = 1e18;
+const int dx[] = {0,0,1,-1}, dy[] =  {1,-1,0,0};
+
+void tr(int a,int b){cout << a << " " << b << "\n";}    
+int a[N], avg, sum[N];
+vi adj[N];
+vector <array<int,3>> ans;
+void dfs(int x=1, int p=0){
+    sum[x] += a[x];
+    for(int i: adj[x]) if(i!=p){
+        dfs(i,x);
+        sum[x] += sum[i];
+    }
+}
+void distribute(int x=1, int p=0){
+    for(int i: adj[x]) if(i!=p){
+        if(sum[i] >= 0) distribute(i,x);
+        if(sum[i] > 0)
+            ans.pb({i,x,sum[i]});
+    }   
+    for(int i: adj[x]) if(i!=p){
+        if(sum[i] < 0){
+            ans.pb({x,i,-sum[i]});
+            distribute(i,x);
+        }
+    }   
+}
+int32_t main() {            
+    ios::sync_with_stdio(0); cin.tie(0);  
+    // freopen("focus!.in", "r", stdin);
+    // freopen("focus!.out", "w", stdout);     
+    int n; cin >> n;
+    rep(i,1,n+1) cin >> a[i], avg += a[i];
+    avg /= n;
+    rep(i,1,n+1) a[i] -= avg;
+    For(i,n-1){
+        int u, v; cin >> u >> v;
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
+    dfs();
+    distribute();
+    cout << size(ans) << "\n";
+    for(auto [i,j,k]: ans) cout << i << " " << j << " " << k << "\n";
+    return 0;       
+} 
