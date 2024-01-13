@@ -23,8 +23,7 @@ int ans;
 map <char,char> mp;
 map <char,bool> vis;
 map <char, vector<char>> radj;
-vector <char> v;
-bool ok  =1;
+vector <char> v;    
 
 void mark(char x){
     if(vis[x]) return;
@@ -33,8 +32,7 @@ void mark(char x){
     for(char i: radj[x]) mark(i);    
 }
 void init(){
-    vis.clear(); ok = 1;
-    for(char c: v) radj[c].clear(), mp[c]=c;
+    for(char c: v) radj[c].clear(), mp[c]='#', vis[c]=0;
     ans = 0;
 }   
 void floyd(char x){
@@ -46,26 +44,26 @@ void floyd(char x){
     int cyc=1;
     a = mp[a];
     while(a != b) a = mp[a], cyc++;
-    if(cyc != 1) ans++;
-    else ans--;
-    assert(cyc <= 52);
-    if(cyc == 52){
-        ok = 0; return;
-    }
+    int prea = ans; 
     mark(x);
+    if(cyc == 1) ans--;
+    else if(ans - prea == cyc) ans++;   
 }
 void solve(){
     string a, b; cin >> a >> b;
     int n = a.size();
+    set <char> S;
+    for(char c: b) S.insert(c);
+    if(S.size()==52 && a != b){ter;}
     For(i,n){
-        if(mp[a[i]] != a[i] && mp[a[i]] != b[i]) {ter;}
-        else if(mp[a[i]] != a[i]) continue;
+        if(mp[a[i]] != '#' && mp[a[i]] != b[i]) {ter;}
+        else if(mp[a[i]] != '#') continue;
         mp[a[i]] = b[i];
         radj[b[i]].pb(a[i]);
     }   
+    for(char c: v) mp[c] = mp[c]=='#' ? c: mp[c];
     for(char c: v){
         if(!vis[c]) floyd(c);
-        if(!ok) {ter;}
     }
     cout << ans << "\n";
 }
