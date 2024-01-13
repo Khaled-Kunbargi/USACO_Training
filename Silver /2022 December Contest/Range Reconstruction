@@ -1,0 +1,62 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long 
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define ppb pop_back
+#define f first
+#define s second
+#define all(x) (x).begin(), (x).end()
+#define rep(i , x , n ) for(int i = x ; i < n ; i++ ) 
+#define For(i,n) rep(i,0,n)
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+#define ter no; return
+const int N = 3e3+10, mod = 998244353, OO = 1e18;
+const int dx[] = {0,0,1,-1}, dy[] =  {1,-1,0,0};
+
+void tr(int a,int b){cout << a << " " << b << "\n";}    
+int r[N][N], a[N];
+int mn, mx;
+int32_t main() {            
+    ios::sync_with_stdio(0); cin.tie(0);         
+    // freopen("focus!.in", "r", stdin);
+    // freopen("focus!.out", "w", stdout);     
+    int n; cin >> n;
+    for(int i=1; i<=n; ++i){
+        for(int j=i; j<=n; ++j) cin >> r[i][j];
+    }
+    for(int i=n-1; i>=1; --i){
+        int cur = a[i+1] + r[i][i+1];
+        int nmx = cur, nmn = cur;
+        bool ok = 1;
+        for(int j=i+1; j<=n; ++j){
+            nmn = min(nmn, a[j]);
+            nmx = max(nmx, a[j]);
+            if(nmx - nmn != r[i][j]){
+                ok = 0; 
+                break;
+            }
+        }
+        if(ok){ a[i] = cur; continue; }
+        ok = 1; cur = a[i+1] - r[i][i+1];
+        nmx = cur, nmn = cur;
+        for(int j=i+1; j<=n; ++j){
+            nmn = min(nmn, a[j]);
+            nmx = max(nmx, a[j]);
+            if(nmx - nmn != r[i][j]){
+                ok = 0; 
+                break;
+            }
+        }
+        if(!ok){
+            cout << i << "\n";
+            break;
+        }
+        a[i] = cur;
+    }
+    for(int i=1; i<=n; ++i) cout << a[i] << " \n"[i==n];
+    return 0;       
+}  
