@@ -1,0 +1,84 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long 
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define ppb pop_back
+#define f first
+#define s second
+#define all(x) (x).begin(), (x).end()
+#define rep(i , x , n ) for(int i = x ; i < n ; i++ ) 
+#define For(i,n) rep(i,0,n)
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+#define ter cout << "-1\n"; return
+const int N = 3e3+10, mod = 998244353, OO = 1e18;
+const int dx[] = {0,0,1,-1}, dy[] =  {1,-1,0,0};
+
+void tr(int a,int b){cout << a << " " << b << "\n";}    
+//Global Vars.
+int ans;
+map <char,char> mp;
+map <char,bool> vis;
+map <char, vector<char>> radj;
+vector <char> v;
+bool ok  =1;
+
+void mark(char x){
+    if(vis[x]) return;
+    vis[x]=1; ans++;
+    mark(mp[x]);    
+    for(char i: radj[x]) mark(i);    
+}
+void init(){
+    vis.clear(); ok = 1;
+    for(char c: v) radj[c].clear(), mp[c]=c;
+    ans = 0;
+}   
+void floyd(char x){
+    char a=mp[x], b = mp[a];
+    while(a != b){
+        a = mp[a];
+        b = mp[mp[b]];
+    }
+    int cyc=1;
+    a = mp[a];
+    while(a != b) a = mp[a], cyc++;
+    if(cyc != 1) ans++;
+    else ans--;
+    assert(cyc <= 52);
+    if(cyc == 52){
+        ok = 0; return;
+    }
+    mark(x);
+}
+void solve(){
+    string a, b; cin >> a >> b;
+    int n = a.size();
+    For(i,n){
+        if(mp[a[i]] != a[i] && mp[a[i]] != b[i]) {ter;}
+        else if(mp[a[i]] != a[i]) continue;
+        mp[a[i]] = b[i];
+        radj[b[i]].pb(a[i]);
+    }   
+    for(char c: v){
+        if(!vis[c]) floyd(c);
+        if(!ok) {ter;}
+    }
+    cout << ans << "\n";
+}
+int32_t main() {            
+    ios::sync_with_stdio(0); cin.tie(0);         
+    // freopen("focus!.in", "r", stdin);
+    // freopen("focus!.out", "w", stdout);     
+    for(char c='A'; c<='Z'; ++c) v.pb(c);
+    for(char c='a'; c<='z'; ++c) v.pb(c);
+    int t; cin >> t;
+    while(t--){
+        init(); 
+        solve();
+    }
+    return 0;       
+}  
