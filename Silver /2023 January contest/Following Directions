@@ -1,0 +1,95 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long 
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define ppb pop_back
+#define f first
+#define s second
+#define all(x) (x).begin(), (x).end()
+#define rep(i , x , n ) for(int i = x ; i < n ; i++ ) 
+#define For(i,n) rep(i,0,n)
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+#define ter cout << "-1\n"; return
+const int N = 3e6+10, mod = 998244353, OO = 1e18;
+const int dx[] = {0,0,1,-1}, dy[] =  {1,-1,0,0};
+
+void tr(int a,int b){cout << a << " " << b << "\n";}    
+//Global Vars.
+int p[N], val[N], sz[N], n;
+char b[N];
+int sum(){
+    int ans=0;
+    for(int i=1; i<=n; ++i){
+        int ind1 = (n+1)*(i-1)+n+1;
+        ans += (sz[ind1]-1) * val[ind1];
+        int ind2 = (n+1)*n+i;
+        ans += (sz[ind2]-1) * val[ind2];
+    }
+    return ans;
+}
+int ind(int x,int y){return (n+1)*(x-1)+y;}
+int32_t main() {            
+    ios::sync_with_stdio(0); cin.tie(0);         
+    // freopen("focus!.in", "r", stdin);
+    // freopen("focus!.out", "w", stdout);     
+    cin >> n;
+    rep(i,1,(n+1)*n+n+2) sz[i] = 1;
+    rep(i,1,n+1){
+        string a; cin >> a;
+        int x; cin >> x;
+        val[(n+1) * (i-1) + n+1]=x;
+        p[(n+1)*(i-1)+n+1] = (n+1)*(i-1)+n+1;
+        rep(j,1,n+1){
+            int cur = ind(i,j);
+            b[cur] = a[j-1];
+            if(b[cur] == 'R') p[cur] = p[cur+1];
+            else p[cur] = p[cur+n+1];
+        }   
+    }
+    rep(i,1,n+1) {
+        int x; cin >> x;
+        val[(n+1)*n+i] = x;
+        p[(n+1)*n+i] = (n+1)*n+i;
+    }
+    rep(i,1,n+1){
+        rep(j,1,n+1){
+            int cur = ind(i,j);
+            if(b[cur] == 'R') {
+                p[cur] = cur+1;
+                sz[cur+1] += sz[cur];                
+            }else{
+                p[cur] = cur+n+1;
+                sz[cur+n+1] += sz[cur];
+            } 
+        }
+    }
+    cout << sum() << "\n";
+    int q; cin >> q;
+    while(q--){
+        int x,y; cin >> x >> y;
+        int cur = ind(x,y), tor=cur+1, toa=cur+n+1;
+        if(b[cur] == 'R'){
+            b[cur]='D';
+        }else{
+            b[cur]='R';
+            swap(tor, toa);
+        }
+        p[cur] = toa;
+        while(p[tor] != tor){
+            sz[tor] -= sz[cur];
+            tor = p[tor];
+        }
+        sz[tor] -= sz[cur];
+        while(p[toa] != toa){
+            sz[toa] += sz[cur];
+            toa = p[toa];
+        }
+        sz[toa] += sz[cur];
+        cout << sum() << "\n";
+    }
+    return 0;       
+}  
