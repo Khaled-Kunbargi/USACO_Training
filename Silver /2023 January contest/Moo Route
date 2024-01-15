@@ -1,0 +1,68 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long 
+typedef long long ll;
+typedef vector <int> vi;
+typedef pair <int,int> pi;
+#define pb push_back
+#define ppb pop_back
+#define f first
+#define s second
+#define all(x) (x).begin(), (x).end()
+#define rep(i , x , n ) for(int i = x ; i < n ; i++ ) 
+#define For(i,n) rep(i,0,n)
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+#define ter cout << "-1\n"; return
+const int N = 2e5+10, mod = 998244353, OO = 1e18;
+const int dx[] = {0,0,1,-1}, dy[] =  {1,-1,0,0};
+
+void tr(int a,int b){cout << a << " " << b << "\n";}    
+int a[N];
+void pr(int x, char c){For(i,x) cout << c;}
+void pr(int x,int ho){
+    For(i,x){
+        pr(ho,'R');
+        pr(ho,'L');
+    }   
+}
+int32_t main() {            
+    ios::sync_with_stdio(0); cin.tie(0);            
+    // freopen("focus!.in", "r", stdin);
+    // freopen("focus!.out", "w", stdout);     
+    int n; cin >> n;
+    rep(i,1,n+1) cin >> a[i];
+    int c=0; 
+    for(int i=1; i<=n; ++i){
+        int j=i,j2=i;
+        while(j <= n && a[j-1] <= a[j]) j++;
+        while(j2 <= n && a[j2] >= a[j2+1]) j2++;
+    
+        if(j <= j2){
+            int len = j2-i;
+            for(int k=j2-1; k >= i; --k){
+                if(k == j2-1) pr(a[n]/2-1,len);
+                else pr((a[i]-a[i+1])/2,len);
+                int l=k;
+                while(l >= i && a[l]==a[k]) l--, len--;
+                k = l+1;
+            }       
+            pr(j2-i,'R');
+            i = j2-1;
+        }else{
+            int len = j-i;
+            for(int k=i; k < j; ++k){
+                if(k==i) pr(a[i]/2-1,len);
+                else pr((a[k]-a[k-1])/2,len);
+                int l=k;
+                while(l < j && a[l]==a[k]) l++,len--;
+                pr(l-k,'R');
+                k = l-1;
+            }
+            i = j-1;  
+        }
+    }
+    pr(n,'L');
+    cout << "\n";
+    return 0;       
+}  
