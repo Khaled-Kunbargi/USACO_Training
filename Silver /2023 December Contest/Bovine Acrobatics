@@ -1,0 +1,123 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define pi pair<int,int>
+#define vi vector<int>
+#define rep(i,x,n) for(int i=x; i<n; ++i)
+#define For(i,n) rep(i,0,n)
+#define pb push_back
+#define f first
+#define s second
+#define endl "\n"
+#define sp ' '
+#define sz size()
+#define all(x) (x).begin(),(x).end()
+
+const int N = 3e5+10, OO = 1e18, mod = 1e9+7, mx = 1e6;
+void tr(int a, int b){cout << a << sp << b << endl;}
+void _mx(int &a, int b){a = max(a,b);}
+void _mn(int &a, int b){a = min(a,b);}
+
+int w[N], a[N], p[N], h[N], t[N];
+bool vis[N], st[N];
+vi W;
+void dfs(int x){
+    if(vis[x]) return;
+    vis[x] = 1;
+    if(p[x] == x){
+        h[x] = a[x];
+        return;
+    }
+    dfs(p[x]);
+    h[x] = h[p[x]] + a[x];
+}
+int get(int x){return lower_bound(all(W),x) - begin(W);}
+int32_t main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("3.in", "r", stdin);
+    int n,m,k; cin >> n >> m >> k;
+    vector <pi> v;
+    W.pb(0);
+    For(i,n){
+        int x,y; cin >> x >> y;
+        v.pb({x,y});
+        W.pb(x);
+    }
+    sort(all(W));
+    sort(all(v));
+    rep(i,1,n+1){
+        a[i] = v[i-1].s;
+    }
+    For(i,n+3) p[i] = i;
+    rep(i,1,n+1){
+        if(vis[i]) continue;
+        int w = v[i-1].f, j = get(w);
+        st[i] = 1;
+        while(j <= n){
+            w = v[j-1].f;
+            vis[j] = 1;
+            int nxt = get(w+k);
+            if(nxt <= n) p[j] = nxt;   
+            j = nxt;
+            if(vis[nxt]) break;
+        }   
+    }
+    rep(i,1,n+1) vis[i] = 0;
+    rep(i,1,n+1){
+        if(!vis[i]) dfs(i);
+    }
+    set <pi> S;
+    rep(i,1,n+1){
+        if(st[i]){ 
+            S.insert({h[i],i});
+        }
+    }   
+    // int cnt=0;
+    while(S.sz){
+        // if(cnt++ > 1) break;
+        auto j = prev(S.end());
+        int i = (*j).s, x = i;
+        S.erase(j);
+        // cout << x << endl;
+        vi ch;
+        while(p[x] != x){
+            ch.pb(x);
+            x = p[x];
+        }
+        ch.pb(x);
+        int mn = OO, fi = i, lt=-1;
+        for(int i: ch) _mn(mn, a[i]);
+        for(int i=0; i<ch.sz; ++i){
+            a[ch[i]] -= mn;
+            if(!a[ch[i]]){
+                if(lt != -1){
+                    p[lt] = (ch[i] == p[ch[i]] ? lt : p[ch[i]]);
+                }
+            } else lt = ch[i];
+        }
+        // assert(mn > 0);
+        t[ch.sz] += mn;
+        int k = 0;
+        while(k < ch.sz && !a[ch[k]]) k++, fi = p[fi];
+        if(k == ch.sz) continue;
+
+        int cnt = a[fi], y = fi;
+        while(p[y] != y) y=p[y], cnt += a[y];
+        h[fi] = cnt;
+
+        if(h[fi] > a[fi]){        
+            S.insert({h[fi], fi});
+        }
+        else{ 
+            t[1] += a[fi];
+        }
+    }
+    int ans = 0;
+    for(int i=n; i>=1; --i){
+        int y = min(m, t[i]);
+        ans += y * i;
+        m -= y;
+    }   
+    cout << ans << endl;
+    return 0;
+}
