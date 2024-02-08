@@ -1,0 +1,158 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define pi pair<int,int>
+#define vi vector<int>
+#define rep(i,x,n) for(int i=x; i<n; ++i)
+#define For(i,n) rep(i,0,n)
+#define pb push_back
+#define f first
+#define s second
+#define endl "\n"
+#define sp ' '
+// #define sz size()
+#define all(x) (x).begin(),(x).end()
+
+const int N = 5e5+10, OO = 1e18, mod = 1e9+7, mx = 1e6;
+void tr(int a, int b){cout << a << sp << b << endl;}
+void _mx(int &a, int b){a = max(a,b);}
+void _mn(int &a, int b){a = min(a,b);}
+
+int cur[N], j;
+#define el int
+el ne=0;
+vector <el> t[6];
+struct ST {
+    int siz=1;
+    void init(int n){
+        while(siz <= n) siz *= 2;
+        For(i,6)
+            t[i].assign(2*siz, ne);
+    }
+    void mer(el &d, el a, el b){
+        d = a+b;
+    }
+    el calc(int l, int r, int x, int lx, int rx){
+        if(r <= lx || rx <= l) return ne;
+        if(l <= lx && rx <= r) return t[j][x];
+        el ret = ne;
+        int m = lx+rx>>1;
+        mer(ret, ret, calc(l,r,2*x+1, lx, m));
+        mer(ret, ret, calc(l,r,2*x+2, m, rx));
+        return ret;
+    }el calc(int l, int r){return calc(l,r,0,0,siz);}
+
+    void upd(int i, int v, int x, int lx, int rx){
+        if(rx-lx == 1){
+            t[j][x] = v;
+            return;
+        }
+        int m = lx+rx>>1;
+        if(i < m) upd(i,v,2*x+1,lx,m);
+        else upd(i,v,2*x+2,m,rx);
+        mer(t[j][x],t[j][2*x+1],t[j][2*x+2]);
+    }void upd(int l, int r) {upd(l,r,0,0,siz);}
+} st;
+
+int32_t main() {
+    ios::sync_with_stdio(0); cin.tie(0);    
+    int n,c; cin >> n >> c;
+    vi T(2*c+5);
+    For(i,n){
+        int x; cin >> x; 
+        x += c+2;
+        T[x] = 1;
+    }
+    string a; cin >> a;
+    cur[0] = c+2;
+    For(i,c){
+        cur[i+1] = cur[i];
+        if(a[i] == 'L'){
+            cur[i+1]--;
+        }   
+        if(a[i] == 'R'){
+            cur[i+1]++;
+        }
+    }
+    st.init(2*c+5);
+    For(i,c){
+        if(a[i] != 'F') continue;
+        if(T[cur[i]-2]){
+            j=0;
+            st.upd(cur[i]-2,1);
+        }
+        if(T[cur[i]-1]){
+            j=1;
+            st.upd(cur[i]-1,1);
+        }
+        if(T[cur[i]]) {
+            j=2;
+            st.upd(cur[i],1);
+        }
+        if(T[cur[i]+1]) {
+            j=3;
+            st.upd(cur[i]+1,1);
+        }
+        if(T[cur[i]+2]) {
+            j=4;
+            st.upd(cur[i]+2,1);
+        }
+    }
+    j = 2;
+    int ans = st.calc(0,2*c+3), cnt=0;
+    For(i,c){
+        if(a[i] == 'F'){
+            j = 3;
+            _mx(ans, cnt + st.calc(0,2*c+3));
+            j = 1;
+            _mx(ans, cnt + st.calc(0,2*c+3));
+            if(T[cur[i]]){
+                cnt++;
+                For(k,6){
+                    j = k;
+                    st.upd(cur[i],0);
+                }      
+            }
+        }
+        if(a[i] == 'R'){
+            j = 0;
+            _mx(ans, cnt+st.calc(0,2*c+3));
+
+            j=1;
+            if(T[cur[i]]){
+                For(k,6){
+                    j = k;
+                    st.upd(cur[i],0);
+                }      
+            }
+            _mx(ans, cnt + st.calc(0,2*c+3) + T[cur[i]]);
+            if(T[cur[i]]){
+                For(k,6){
+                    j = k;
+                    st.upd(cur[i],1);
+                }      
+            }
+        }
+        if(a[i] == 'L'){
+            j = 4;
+            _mx(ans, cnt+st.calc(0,2*c+3));
+
+            j=3;
+            if(T[cur[i]]){
+                For(k,6){
+                    j = k;
+                    st.upd(cur[i],0);
+                }      
+            }
+            _mx(ans, cnt + st.calc(0,2*c+3) + T[cur[i]]);
+            if(T[cur[i]]){
+                For(k,6){
+                    j = k;
+                    st.upd(cur[i],1);
+                }      
+            }
+        }        
+    } 
+    cout << ans << endl;
+    return 0;
+}
