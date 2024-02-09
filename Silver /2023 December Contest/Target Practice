@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define int long long
+// #define int long long
 #define pi pair<int,int>
 #define vi vector<int>
 #define rep(i,x,n) for(int i=x; i<n; ++i)
@@ -13,14 +13,14 @@ using namespace std;
 // #define sz size()
 #define all(x) (x).begin(),(x).end()
 
-const int N = 5e5+10, OO = 1e18, mod = 1e9+7, mx = 1e6;
+const int N = 5e5+10, OO = 1e9, mod = 1e9+7, mx = 1e6;
 void tr(int a, int b){cout << a << sp << b << endl;}
 void _mx(int &a, int b){a = max(a,b);}
 void _mn(int &a, int b){a = min(a,b);}
 
 int cur[N], j;
-#define el int
-el ne=0;
+#define el pi
+el ne = {0,0};
 vector <el> t[6];
 struct ST {
     int siz=1;
@@ -30,7 +30,8 @@ struct ST {
             t[i].assign(2*siz, ne);
     }
     void mer(el &d, el a, el b){
-        d = a+b;
+        d.f = a.f + b.f;
+        d.s = a.s + b.s;   
     }
     el calc(int l, int r, int x, int lx, int rx){
         if(r <= lx || rx <= l) return ne;
@@ -44,7 +45,9 @@ struct ST {
 
     void upd(int i, int v, int x, int lx, int rx){
         if(rx-lx == 1){
-            t[j][x] = v;
+            t[j][x].f = v;
+            if(t[j][x].f > 0) t[j][x].s = 1;
+            else t[j][x].s = 0;
             return;
         }
         int m = lx+rx>>1;
@@ -52,6 +55,19 @@ struct ST {
         else upd(i,v,2*x+2,m,rx);
         mer(t[j][x],t[j][2*x+1],t[j][2*x+2]);
     }void upd(int l, int r) {upd(l,r,0,0,siz);}
+
+    void upd2(int i, int v, int x, int lx, int rx){
+        if(rx-lx == 1){
+            t[j][x].f += v;
+            if(t[j][x].f <= 0) t[j][x].s = 0;   
+            else t[j][x].s = 1;
+            return;
+        }
+        int m = lx+rx>>1;
+        if(i < m) upd2(i,v,2*x+1,lx,m);
+        else upd2(i,v,2*x+2,m,rx);
+        mer(t[j][x],t[j][2*x+1],t[j][2*x+2]);
+    }void upd2(int l, int r) {upd2(l,r,0,0,siz);}
 } st;
 
 int32_t main() {
@@ -74,85 +90,74 @@ int32_t main() {
             cur[i+1]++;
         }
     }
-    st.init(2*c+5);
+    st.init(3*c+5);
     For(i,c){
         if(a[i] != 'F') continue;
         if(T[cur[i]-2]){
             j=0;
-            st.upd(cur[i]-2,1);
+            st.upd2(cur[i]-2,1);
         }
         if(T[cur[i]-1]){
             j=1;
-            st.upd(cur[i]-1,1);
+            st.upd2(cur[i]-1,1);
         }
-        if(T[cur[i]]) {
+        if(T[cur[i]]){
             j=2;
-            st.upd(cur[i],1);
+            st.upd2(cur[i],1);
         }
         if(T[cur[i]+1]) {
             j=3;
-            st.upd(cur[i]+1,1);
+            st.upd2(cur[i]+1,1);
         }
         if(T[cur[i]+2]) {
             j=4;
-            st.upd(cur[i]+2,1);
+            st.upd2(cur[i]+2,1);
         }
     }
-    j = 2;
-    int ans = st.calc(0,2*c+3), cnt=0;
+    int ans = t[2][0].s, cnt=0;
     For(i,c){
         if(a[i] == 'F'){
-            j = 3;
-            _mx(ans, cnt + st.calc(0,2*c+3));
-            j = 1;
-            _mx(ans, cnt + st.calc(0,2*c+3));
+            _mx(ans, cnt + t[3][0].s);
+            _mx(ans, cnt + t[1][0].s);
             if(T[cur[i]]){
+                T[cur[i]] = 0;
                 cnt++;
                 For(k,6){
                     j = k;
                     st.upd(cur[i],0);
-                }      
+                }
             }
+            For(k,6){
+                j = k;
+                int x = cur[i];
+                if(!j) x -= 2;
+                if(j==1) x--;
+                if(j==3) x++;
+                if(j==4) x+=2;
+                if(st.calc(x,x+1).f)
+                    st.upd2(x,-1);
+            }                      
         }
         if(a[i] == 'R'){
-            j = 0;
-            _mx(ans, cnt+st.calc(0,2*c+3));
+            _mx(ans, cnt + t[0][0].s);
+            j = 1;
+            int x = st.calc(cur[i],cur[i]+1).f;
 
-            j=1;
-            if(T[cur[i]]){
-                For(k,6){
-                    j = k;
-                    st.upd(cur[i],0);
-                }      
-            }
-            _mx(ans, cnt + st.calc(0,2*c+3) + T[cur[i]]);
-            if(T[cur[i]]){
-                For(k,6){
-                    j = k;
-                    st.upd(cur[i],1);
-                }      
-            }
+            st.upd(cur[i],0);
+            _mx(ans, cnt + t[1][0].s + T[cur[i]]);
+            st.upd(cur[i],x);
         }
         if(a[i] == 'L'){
-            j = 4;
-            _mx(ans, cnt+st.calc(0,2*c+3));
+            _mx(ans, cnt + t[4][0].s);
+            j = 3;
+            int x = st.calc(cur[i],cur[i]+1).f;
 
-            j=3;
-            if(T[cur[i]]){
-                For(k,6){
-                    j = k;
-                    st.upd(cur[i],0);
-                }      
-            }
-            _mx(ans, cnt + st.calc(0,2*c+3) + T[cur[i]]);
-            if(T[cur[i]]){
-                For(k,6){
-                    j = k;
-                    st.upd(cur[i],1);
-                }      
-            }
+            st.upd(cur[i],0);
+            _mx(ans, cnt + t[3][0].s + T[cur[i]]);
+            st.upd(cur[i],x);
         }        
     } 
+    assert(ans <= n);
     cout << ans << endl;
     return 0;
 }
