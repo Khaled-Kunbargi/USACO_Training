@@ -13,39 +13,31 @@ using namespace std;
 #define sz size()
 #define all(x) (x).begin(),(x).end()
 
-const int N = 4e5+10, OO = 1e18, mod = 1e9+7, mx = 1e6;
+const int N = 1e5+10, OO = 1e18, mod = 1e9+7, mx = 1e6;
 void tr(int a, int b){cout << a << sp << b << endl;}
-void _mx(int &a, int b){a = max(a,b);}
-void _mn(int &a, int b){a = min(a,b);}
+void cmx(int &a, int b){a = max(a,b);}
+void cmn(int &a, int b){a = min(a,b);}
 
-vi v[5];
-// int ans[N];
+pi cnt[10]; int c[N];
 int32_t main() {
     ios::sync_with_stdio(0); cin.tie(0);    
     string a; cin >> a;
+    string b = "#bessie";
     int n = a.sz;
+    int ans=0, lt = -1;
+    For(i,10) cnt[i].s = -1;
     For(i,n){
-        if(a[i]=='b') v[0].pb(i);
-        if(a[i]=='e') v[1].pb(i);
-        if(a[i]=='i') v[2].pb(i);
-        if(a[i]=='s') v[3].pb(i);
+        cnt[0] = {1,i};
+        for(int d=6; d>=1; --d){
+            if(b[d] == a[i] && cnt[d-1].f){
+                cnt[d-1].f = 0;
+                cnt[d].f = 1; cnt[d].s = cnt[d-1].s;
+            }
+        }   
+        int con = (cnt[6].s > 0 ? c[cnt[6].s-1]:0) + cnt[6].s+1;
+        c[i] = con;
+        ans += c[i];
     }
-    For(i,5) v[i].pb(n+1);
-    int ans = 0;
-    for(int i=n-1; i>=0; --i){
-        for(int j=i; j<n; ++j){
-            int k=j,l;
-            l = lower_bound(all(v[0]),k) - begin(v[0]); k = v[0][l];
-            l = lower_bound(all(v[1]),k) - begin(v[1]); k = v[1][l];
-            l = lower_bound(all(v[3]),k) - begin(v[3]); k = v[3][l];
-            l = lower_bound(all(v[3]),k) - begin(v[3]); k = v[3][l];
-            l = lower_bound(all(v[2]),k) - begin(v[2]); k = v[2][l];
-            l = lower_bound(all(v[1]),k) - begin(v[1]); k = v[1][l];    
-            if(k < n)
-                ans += n-k;
-            j = k;
-        }
-    }   
     cout << ans << endl;
     return 0;
-}
+} 
