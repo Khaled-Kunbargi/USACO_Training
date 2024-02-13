@@ -13,7 +13,7 @@ using namespace std;
 #define sz size()
 #define all(x) (x).begin(),(x).end()
 
-const int N = 1e5+10, OO = 1e18, mod = 1e9+7, mx = 1e6;
+const int N = 3e5+10, OO = 1e18, mod = 1e9+7, mx = 1e6;
 void tr(int a, int b){cout << a << sp << b << endl;}
 void cmx(int &a, int b){a = max(a,b);}
 void cmn(int &a, int b){a = min(a,b);}
