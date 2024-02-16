@@ -1,0 +1,62 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define pi pair<int,int>
+#define vi vector<int>
+#define rep(i,x,n) for(int i=x; i<n; ++i)
+#define For(i,n) rep(i,0,n)
+#define pb push_back
+// #define f first
+#define s second
+#define endl "\n"
+#define sp ' '
+#define sz size()
+#define all(x) (x).begin(),(x).end()
+
+const int N = 5e5+10, OO = 1e18, mod = 998244353, mx = 1e6;
+void tr(int a, int b){cout << a << sp << b << endl;}
+void cmx(int &a, int b){a = max(a,b);}
+void cmn(int &a, int b){a = min(a,b);}
+
+int a[N], b[N], c[N];
+int n,A,B,ra; 
+int f(int x){
+    int l = 1, r = ra;
+    bool ok = 1;
+    rep(i,1,n+1){
+        if(a[i]==b[i]){
+            ok &= (0 <= c[i] - (A+B-x)*b[i]);
+        }
+        if(a[i] < b[i]){
+            int nom = c[i] - (A+B-x)*b[i];
+            if(nom >= 0) continue;
+            nom *= -1;
+            cmx(l, (nom+b[i]-a[i]-1) / (b[i]-a[i]));
+        }
+        if(a[i] > b[i]){
+            cmn(r, (c[i]-(A+B-x)*b[i]) / (a[i]-b[i]));
+        }
+    }
+    return (r-l >= 0 && ok && (A-x-r <= 0));
+}
+void solve(){
+    cin >> n >> A >> B;
+    ra = A;
+    rep(i,1,n+1){
+        cin >> a[i] >> b[i] >> c[i];
+        cmn(ra, (c[i]-b[i])/a[i]);
+    }
+    int l = -1, r = A+B-2;
+    while(r > l+1){
+        int m = (l+r)/2;
+        if(f(m)) r = m;
+        else l = m;
+    }
+    cout << r << endl;
+}
+int32_t main() {
+    ios::sync_with_stdio(0); cin.tie(0); 
+    int t; cin >> t;
+    while(t--) solve();       
+    return 0;
+} 
