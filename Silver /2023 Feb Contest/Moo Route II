@@ -1,0 +1,58 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define pi pair<int,int>
+#define vi vector<int>
+#define rep(i,x,n) for(int i=x; i<n; ++i)
+#define For(i,n) rep(i,0,n)
+#define pb push_back
+// #define f first
+#define s second
+#define endl "\n"
+#define sp ' '
+#define sz size()
+#define all(x) (x).begin(),(x).end()
+
+const int N = 3e5+10, OO = 1e18, mod = 998244353, mx = 1e6;
+void tr(int a, int b){cout << a << sp << b << endl;}
+void cmx(int &a, int b){a = max(a,b);}
+void cmn(int &a, int b){a = min(a,b);}
+
+map <pi, vector<pi>> mp;
+map <pi, bool> vis;
+vi v[N];
+int ans[N], a[N];
+int32_t main() {
+    ios::sync_with_stdio(0); cin.tie(0); 
+    int n,m; cin >> n >> m;
+    rep(i,1,n+1) ans[i] = OO;
+    For(i,m){
+        int a,b,c,d; cin >> a >> b >> c >> d;
+        v[a].pb(b);
+        mp[{a,b}].pb({d,c});
+    }
+    ans[1] = 0;
+    rep(i,1,n+1){ 
+        sort(all(v[i]));
+        v[i].erase(unique(all(v[i])), end(v[i]));
+        cin >> a[i];
+    }
+    queue<pi> q; q.push({1,0});
+    while(q.sz){
+        auto [x,t] = q.front(); q.pop();
+        if(ans[x] < t) continue;
+        int j = lower_bound(all(v[x]),t + (x==1 ? 0: a[x])) - begin(v[x]); 
+        for(j; j < v[x].sz; ++j){
+            if(vis[{x,v[x][j]}]) break;
+            vis[{x,v[x][j]}] = 1;
+            for(auto [ct,i]: mp[{x,v[x][j]}]){
+                if(ct < ans[i]){
+                    ans[i] = ct;
+                    q.push({i,ct});
+                }
+            }
+        }   
+    }
+    rep(i,1,n+1) cout << (ans[i]==OO ? -1: ans[i]) << endl;
+    return 0;
+}   
