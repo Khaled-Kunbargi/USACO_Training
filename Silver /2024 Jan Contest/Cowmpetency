@@ -1,0 +1,96 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define pi pair<int,int>
+#define vi vector<int>
+#define rep(i,x,n) for(int i=x; i<n; ++i)
+#define For(i,n) rep(i,0,n)
+#define pb push_back
+#define f first
+#define s second
+#define endl "\n"
+#define sp ' '
+#define sz size()
+#define all(x) (x).begin(),(x).end()
+
+const int N = 8e5+10, OO = 1e18, mod = 998244353, mx = 1e6;
+void tr(int a, int b){cout << a << sp << b << endl;}
+void cmx(int &a, int b){a = max(a,b);}
+void cmn(int &a, int b){a = min(a,b);}
+
+int a[N], mark[N], n, t[N];
+int calc(int x, int l, int r, int lx, int rx){
+    if(lx <= l && r <= rx) return t[x];
+    if(r < lx || rx < l) return -OO;
+    int m = (l+r)/2;
+    return max(calc(2*x,l,m,lx,rx), calc(2*x+1,m+1,r,lx,rx));   
+}int calc(int l, int r){return calc(1,1,n,l,r);}
+
+void upd(int x, int l, int r, int i, int v){
+    if(l == r){
+        t[x] = max(1LL,v);        
+        return;
+    }
+    int m = (l+r)/2;
+    if(i <= m) upd(2*x,l,m,i,v);
+    else upd(2*x+1,m+1,r,i,v);
+    t[x] = max(t[2*x],t[2*x+1]);
+}void upd(int i, int v){upd(1,1,n,i,v);}
+
+void solve(){
+    int q,c; cin >> n >> q >> c;
+    rep(i,1,n+1){ 
+        mark[i]=0;
+        t[i+n-1] = -OO;
+    }
+    set <int> S; S.insert(0);
+    rep(i,1,n+1){ 
+        cin >> a[i];
+        if(!a[i]){ 
+            mark[i] = 1;
+            S.insert(i);
+        }
+        upd(i,a[i]);
+    }
+    bool ok = 1;
+    vector <pi> v;  
+    For(i,q){
+        int p,h; cin >> p >> h;
+        v.pb({p,h});
+    }
+    sort(all(v));
+    for(auto [p,h]: v){
+        int mx1 = calc(1,p), mx2 = calc(p+1,h-1);
+        if(mx1 < mx2){
+            auto j = prev(S.upper_bound(p));
+            ok &= ((*j) > 0);
+            a[*j] = mx2; upd(*j, mx2);
+            mx1 = mx2;
+        }
+        if(mark[h]){ 
+            if(mx1 + 1 > a[h]){
+                a[h] = mx1+1;
+                upd(h, a[h]);
+            }
+        }
+        else ok &= (mx1 < a[h]);
+    }
+    rep(i,1,n+1){ 
+        ok &= (a[i] <= c);
+    }
+    for(auto [p,h]: v){
+        int mx= calc(1,h-1);
+        ok &= (mx < a[h]);
+    }
+    if(!ok) {
+        cout << -1 << endl;
+    }else{
+        rep(i,1,n+1) cout << max(1LL,a[i]) << " \n"[i==n];
+    }
+}
+int32_t main() {
+    ios::sync_with_stdio(0); cin.tie(0); 
+    int t; cin >> t;
+    while(t--) solve();
+    return 0;
+}   
