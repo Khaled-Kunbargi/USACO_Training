@@ -1,0 +1,60 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define pi pair<int,int>
+#define vi vector<int>
+#define rep(i,x,n) for(int i=x; i<n; ++i)
+#define For(i,n) rep(i,0,n)
+#define pb push_back
+#define f first
+#define s second
+#define endl "\n"
+#define sp ' '
+// #define sz size()
+#define all(x) (x).begin(),(x).end()
+
+const int N = 4e5+10, OO = 1e18, mod = 998244353, mx = 1e6;
+void tr(int a, int b){cout << a << sp << b << endl;}
+void cmx(int &a, int b){a = max(a,b);}
+void cmn(int &a, int b){a = min(a,b);}
+
+int a[N], ans, sz;
+vi adj[N], mp[N], v;
+void dfs(int x, int pa){
+    for(int i: adj[x]) if(i != pa){
+        dfs(i,x);
+    }
+    sz += (adj[x].size()==1 && pa);
+}
+void dfs2(int x, int p){
+    for(int i: mp[x]){
+        if(i > sz) break;
+        v.pb(x);
+    }
+    for(int i: adj[x]) if(i != p){
+        dfs2(i,x);
+    }
+    if(adj[x].size()==1 && p && v.size()){
+        v.pop_back();
+        ans++;   
+    }
+    while(v.size() && v.back()==x)
+        v.pop_back();
+}   
+int32_t main() {
+    ios::sync_with_stdio(0); cin.tie(0); 
+    int n; cin >> n;
+    rep(i,1,n+1){ 
+        cin >> a[i]; 
+        mp[a[i]].pb(i);
+    }
+    For(i,n-1){
+        int x,y; cin >> x >> y; 
+        adj[x].pb(y); 
+        adj[y].pb(x);
+    }
+    dfs(1,0);
+    dfs2(1,0);
+    cout << ans << endl;
+    return 0;
+}   
