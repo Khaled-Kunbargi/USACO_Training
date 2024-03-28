@@ -1,0 +1,56 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define pi pair<int,int>
+#define vi vector<int>
+#define rep(i,x,n) for(int i=x; i<n; ++i)
+#define For(i,n) rep(i,0,n)
+#define endl "\n"
+#define sp ' '
+#define pb push_back
+#define f first
+#define s second
+#define sz size()
+#define all(x) (x).begin(),(x).end()
+ 
+const int N = 3e5+10, OO = 1e18, mod = 1e7, mx = 250 * 1e3 + 10;
+void tr(int a, int b){cout << a << sp << b << endl;}
+void cmx(int &a, int b){a = max(a,b);}
+void cmn(int &a, int b){a = min(a,b);}
+
+int w[N], t[N];
+int n,W; 
+bool ok(int y){
+    vi dp(W+1, -OO);
+    dp[0] = 0;
+    rep(i,1,n+1){
+        for(int x=W; x>=0; --x){
+            cmx(dp[min(W,x+w[i])], dp[x] + 1000*t[i] - y*w[i]);
+        }
+    }
+    return dp[W] >= 0;
+}
+int32_t main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    freopen("talent.in", "r", stdin);
+    freopen("talent.out", "w", stdout);
+    cin >> n >> W;
+    vector <pi> v;
+    rep(i,1,n+1){
+        cin >> w[i] >> t[i];
+        v.pb({w[i],t[i]});
+    }
+    sort(all(v));
+    rep(i,1,n+1){
+        w[i] = v[i-1].f;
+        t[i] = v[i-1].s;
+    }
+    int l = 0, r = 1e7;
+    while(r > l+1){
+        int m = (l+r)/2;
+        if(ok(m)) l = m;
+        else r = m;
+    }
+    cout << l << endl;
+    return 0;
+}
