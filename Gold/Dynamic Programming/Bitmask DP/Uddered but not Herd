@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define int long long
+// #define int long long
 #define pi pair<int,int>
 #define vi vector<int>
 #define rep(i,x,n) for(int i=x; i<n; ++i)
@@ -13,65 +13,48 @@ using namespace std;
 #define sz size()
 #define all(x) (x).begin(),(x).end()
  
-const int N = 2e5+10, OO = 1e18, mod = 1e9+7, mx = 8;
+const int N = 1e5+10, OO = 1e9, mod = 1e9+7, mx = 20;
+const int dx[]{0,1}, dy[]{1,0};
 void tr(int a, int b){cout << a << sp << b << endl;}
 void cmx(int &a, int b){a = max(a,b);}
 void cmn(int &a, int b){a = min(a,b);}
 
-int dp[1<<mx], v[mx][mx], mp[mx], a[N];
+int a[N], mp[mx], dp[1<<mx],adj[mx][mx];
 string al;
 /*
-mildredree
-
-deilmr
-012345
-
-dp[m] = 1.
-dp[e] = 3.
-dp[m,e] = 3.
-dp[d] = 2.
-dp[m,d] = 2.
-dp[m,d,e] = 3.
+babcdcadabca
+ans = 5.
+dp[a] =  
+dp[b,c] = 3
 */
 int32_t main() {
-    ios::sync_with_stdio(0); cin.tie(0);
+    ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
     // freopen("talent.in", "r", stdin);
     // freopen("talent.out", "w", stdout);
     string b; cin >> b;
     al = b;
-    sort(all(al)); al.erase(unique(all(al)), end(al));
+    sort(all(al)); al.erase(unique(all(al)),end(al));
     int n = b.sz;
     For(i,n){
-        For(j,al.sz) if(b[i]==al[j]) a[i] = j;
+        For(j,al.sz) if(al[j]==b[i]) a[i] = j;
         mp[a[i]]++;
-    }
-    For(i,mx){ For(j,mx) if(j != i){
-        bool fl=0; 
-        // a, e 
-        For(k,n){
-            if(a[k]==j && !fl) v[i][j]++;
-            if(a[k]==i) fl = 1;
-            if(a[k]==j) fl = 0;
-        }
-    }}
-    // cout << v[4][1] << endl;
+    }    
+    For(i,n-1) adj[a[i]][a[i+1]]++;
     For(i,al.sz){
-        dp[(1<<i)] = mp[i];
+        dp[1<<i] = adj[i][i];
     }
-    for(int msk=3; msk < 1<<mx; ++msk){
+    for(int msk=1; msk < 1<<al.sz; ++msk){
         if(__builtin_popcount(msk)==1) continue;
         dp[msk] = OO;
-        For(i,mx) if((1<<i) & msk){
+        For(i,al.sz) if((1<<i) & msk){
             int c = 0;
-            For(j,mx) if(((1<<j)&msk) && j != i){
-                c += v[i][j];
+            For(j,al.sz) if((1<<j)&msk) {
+                c += adj[i][j];
             }
-            cmn(dp[msk], dp[msk^(1<<i)] + c);
-        } 
-    }  
-    int all = 0;
-    For(i,mx) if(mp[i]) all += (1<<i);
-    cout << dp[all] << endl;
+            cmn(dp[msk], dp[msk-(1<<i)]+c);
+        }
+    }
+    cout << dp[(1<<al.sz)-1]+1 << endl;
     return 0;
 }
 /*
