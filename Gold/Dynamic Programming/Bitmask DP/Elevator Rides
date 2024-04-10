@@ -1,33 +1,65 @@
 #include <bits/stdc++.h>
 using namespace std;
-typedef long long ll; 
+// #define int long long
+#define pi pair<int,int>
+#define vi vector<int>
+#define rep(i,x,n) for(int i=x; i<n; ++i)
+#define For(i,n) rep(i,0,n)
+#define endl "\n"
+#define sp ' '
+#define pb push_back
+#define f first
+#define s second
+#define sz size()
+#define all(x) (x).begin(),(x).end()
  
-int main() {
-    ios::sync_with_stdio(0); cin.tie(0);
-    //freopen("guard.in", "r", stdin);
-    //freopen("guard.out", "w", stdout);
- 
-    int x, n; cin >> n >> x;
-    int w[n];
-    for(int i=0; i<n; i++) cin >> w[i];
- 
-    pair <int,int> best[1 << n];
-    best[0] = {1, 0};
-    for(int s=1; s < 1 << n; s++){
-        best[s] = {n+1, 0};
-        for(int p=0; p<n; p++){
-            if((s & (1 << p)) == 0) continue;
- 
-            auto option = best[s ^ (1 << p)];
-            if(option.second + w[p] <= x){
-                option.second += w[p];
-            }else{
-                option.first++;
-                option.second = w[p];
-            }
-            best[s] = min(best[s], option);
+const int N = 20, OO = 2e9, mod = 1e9+7, mx = 1e6+1;
+const int dx[]{0,1}, dy[]{1,0};
+void tr(int a, int b){cout << a << sp << b << endl;}
+void cmx(int &a, int b){a = max(a,b);}
+void cmn(int &a, int b){a = min(a,b);}
+
+int w[N];
+pi dp[1<<N];
+int32_t main() {
+    ios::sync_with_stdio(0); cin.tie(0); 
+    // freopen("talent.in", "r", stdin);
+    // freopen("talent.out", "w", stdout);
+    int n,x; cin >> n >> x;
+    For(i,n){
+        cin >> w[i];
+    }
+    For(i,n){
+        dp[(1<<i)] = {1,x-w[i]};
+    }
+    for(int msk=3; msk < 1<<n; ++msk){
+        if(__builtin_popcount(msk)==1) continue;
+        dp[msk] = {OO,0};
+        For(i,n) if((1<<i)&msk){
+            int other = msk - (1<<i);
+            if(dp[other].s >= w[i]){
+                if(dp[other].f < dp[msk].f){
+                    dp[msk].f = dp[other].f;
+                    dp[msk].s = dp[other].s-w[i];
+                }else if(dp[other].f == dp[msk].f){
+                    cmx(dp[msk].s, dp[other].s-w[i]);
+                }
+            } else {
+                if(dp[other].f+1 < dp[msk].f){
+                    dp[msk].f = dp[other].f+1;
+                    dp[msk].s = x-w[i];
+                }else if(dp[other].f+1==dp[msk].f){
+                    cmx(dp[msk].s, x-w[i]);
+                }
+            }    
         }
     }
-    cout << best[(1 << n)-1].first;
+    cout << dp[(1<<n)-1].f << endl;
     return 0;
-}  
+}
+/*
+Just some notices : 
+I believe you can do it !
+You've done things that were harder ... 
+Stay calm and focused  =)
+*/
