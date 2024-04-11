@@ -71,3 +71,59 @@ I believe you can do it !
 You've done things that were harder ... 
 Stay calm and focused  =)
 */
+//another solution : 
+/*
+#include <bits/stdc++.h>
+using namespace std;
+// #define int long long
+#define pi pair<int,int>
+#define vi vector<int>
+#define rep(i,x,n) for(int i=x; i<n; ++i)
+#define For(i,n) rep(i,0,n)
+#define endl "\n"
+#define sp ' '
+#define pb push_back
+#define f first
+#define s second
+#define sz size()
+#define all(x) (x).begin(),(x).end()
+ 
+const int N = 20, OO = 2e9, mod = 1e9+7, mx = 1e3+1;
+const int dx[]{0,1}, dy[]{1,0};
+void tr(int a, int b){cout << a << sp << b << endl;}
+void cmx(int &a, int b){a = max(a,b);}
+void cmn(int &a, int b){a = min(a,b);}
+
+int dp[1<<N], a[N], b[N];
+int sum[1<<N];
+
+int32_t main() {
+    ios::sync_with_stdio(0); cin.tie(0); 
+    // freopen("talent.in", "r", stdin);
+    // freopen("talent.out", "w", stdout);
+    int n,m; cin >> n >> m;
+    For(i,n) cin >> a[i];
+    For(i,m) cin >> b[i];
+    memset(dp,-1,sizeof(dp));
+    dp[0] = 0;
+    for(int msk=1; msk < 1<<m; ++msk){
+        For(i,m) if((1<<i)&msk){
+            int other = msk-(1<<i);
+            if(dp[other]==-1) continue;
+
+            if(sum[other]+b[i] == a[dp[other]]){
+                dp[msk] = dp[other]+1;
+            }else if(sum[other]+b[i] < a[dp[other]]){
+                dp[msk] = dp[other];
+                sum[msk] = sum[other]+b[i];
+            }
+        }
+        if(dp[msk]==n){
+            cout << "YES" << endl;
+            return 0;
+        }
+    }
+    cout << "NO" << endl;
+    return 0;
+}
+*/
