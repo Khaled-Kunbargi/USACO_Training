@@ -1,0 +1,74 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define endl "\n"
+#define sp ' '
+#define int long long
+#define rep(i,x,n) for(int i=x; i<n; ++i)
+#define For(i,n) rep(i,0,n)
+#define vi vector<int>
+#define pi pair<int,int>
+#define pb push_back
+#define sz size()
+#define all(x) (x).begin(),(x).end()
+
+const int N = 20, mod = 1e9+7;
+
+bool dp[1<<N][30];
+vi calc[30];
+
+/*
+calc[1] = {1^2, 2^4, 4^8, 8^1}
+*/
+int32_t main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    int t,n; cin >> t >> n;
+    For(i,n){
+        dp[1<<i][0] = 1;
+    }
+    For(i,n){
+        For(k,n){
+            int x=0,c=1<<k;
+            For(j,i+1){
+                x ^= c;
+                c *= 2;
+                if(c >= (1<<n)) c = 1;
+            }
+            calc[i].pb(x);
+        }
+    }
+    for(int i=1; i<n; ++i){
+        vi v;
+        for(int x=0; x < 1<<n; ++x){
+            if(dp[x][i-1]) v.pb(x);
+        }   
+        for(int x: v){
+            for(int j: calc[i]) dp[j^x][i] = 1;
+        }
+    }
+    while(t--){
+        string a,b; cin >> a >> b;
+        int x=0,y=0;
+        for(int i=n-1; i>=0; --i){
+            if(a[i]=='1') x += (1<<(n-i-1));
+            if(b[i]=='1') y += (1<<(n-i-1));
+        }
+        if(!x){
+            cout << 0 << endl;
+            continue;
+        }
+        bool ok = 0;
+        int p = y;
+        for(int i=1; i<=n; ++i){
+            if(dp[x^p][i-1]){
+                cout << i << endl;
+                ok = 1;
+                break;
+            }   
+            if(y&1) y /= 2, y |= (1<<(n-1));
+            else y /= 2;
+            p ^= y;
+        }
+        assert(ok);
+    }
+    return 0;
+}
