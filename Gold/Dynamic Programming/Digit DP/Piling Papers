@@ -1,0 +1,172 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ll long long
+#define pi pair<int,int>
+#define vi vector<int>
+#define rep(i,x,n) for(int i=x; i<n; ++i)
+#define For(i,n) rep(i,0,n)
+#define endl '\n'
+#define sp ' '
+#define pb push_back
+#define f first
+// #define s second
+#define sz size()
+#define all(x) (x).begin(),(x).end()
+ 
+const int N = 301, OO = 2e9, mod = 1e9+7, M = 1e6;
+const int dx[]{0,0,1,-1}, dy[]{1,-1,0,0};
+void tr(int a, int b){cout << a << sp << b << endl;}
+void cmx(int &a, int b){a = max(a,b);}
+void cmn(int &a, int b){a = min(a,b);}
+
+string A,B;
+char a[N];
+int dp[N][19][19][3], dp2[N][19][19][3], ans[N][N], n;
+int fact[N], inv[N];
+int exp(int b, int p){
+    int res = 1;
+    while(p > 0){
+        if(p & 1) res = res * b % mod;
+        b = b*b % mod;
+        p /= 2;
+    }   
+    return res;
+}
+int c(int a, int b){
+    if(b > a) return 0;
+    return (fact[a] * inv[b] % mod) * inv[a-b] % mod;
+}
+void solve(){
+    B = '#'+B; A = '#'+A;
+    rep(l,1,n+1){
+        memset(dp,0,sizeof(dp)); memset(dp2,0,sizeof(dp2));
+        rep(r,l,n+1){
+            for(int i=1; i<B.sz; ++i){
+                dp[r][i][i][(a[r] < B[i] ? 0: (a[r] > B[i] ? 1: 2))] = 2;
+                if(r > l){
+                    For(k,3) dp[r][i][i][k] += dp[r-1][i][i][k], dp[r][i][i][k] %= mod;
+                }
+            }
+            for(int i=1; i<A.sz; ++i){
+                dp2[r][i][i][(a[r] < A[i] ? 0: (a[r] > A[i] ? 1: 2))] = 2;
+                if(r > l){
+                    For(k,3) dp2[r][i][i][k] += dp2[r-1][i][i][k], dp2[r][i][i][k] %= mod;
+                }
+            }
+            for(int siz=1; siz < B.sz-1 && siz <= r-l; ++siz){
+                for(int i=1; i+siz < B.sz; ++i){
+                    if(a[r] < B[i]){
+                        dp[r][i][i+siz][0] += ((dp[r-1][i+1][i+siz][0] + dp[r-1][i+1][i+siz][1])%mod + dp[r-1][i+1][i+siz][2]) % mod;
+                        dp[r][i][i+siz][0] %= mod;
+                    } else if(a[r] > B[i]){
+                        dp[r][i][i+siz][1] += ((dp[r-1][i+1][i+siz][0] + dp[r-1][i+1][i+siz][1])%mod + dp[r-1][i+1][i+siz][2]) % mod;
+                        dp[r][i][i+siz][1] %= mod;
+                    } else {
+                        For(k,3)
+                            dp[r][i][i+siz][k] += dp[r-1][i+1][i+siz][k], dp[r][i][i+siz][k] %= mod;
+                    }
+                    if(a[r] < B[i+siz]){
+                        dp[r][i][i+siz][0] += (dp[r-1][i][i+siz-1][0] + dp[r-1][i][i+siz-1][2]) % mod; dp[r][i][i+siz][0] %= mod;
+                        dp[r][i][i+siz][1] += dp[r-1][i][i+siz-1][1]; dp[r][i][i+siz][1] %= mod;
+                    } else if(a[r] > B[i+siz]){
+                        dp[r][i][i+siz][1] += (dp[r-1][i][i+siz-1][1] + dp[r-1][i][i+siz-1][2]) % mod; dp[r][i][i+siz][1] %= mod;
+                        dp[r][i][i+siz][0] += dp[r-1][i][i+siz-1][0]; dp[r][i][i+siz][0] %= mod;
+                    } else {
+                        For(k,3)
+                            dp[r][i][i+siz][k] += dp[r-1][i][i+siz-1][k], dp[r][i][i+siz][k] %= mod;         
+                    }  
+                    For(j,3){
+                        dp[r][i][i+siz][j] += dp[r-1][i][i+siz][j]; 
+                        dp[r][i][i+siz][j] %= mod;
+                    }              
+                }
+            }
+            for(int siz=1; siz < A.sz-1 && siz <= r-l; ++siz){
+                for(int i=1; i+siz < A.sz; ++i){
+                    if(a[r] < A[i]){
+                        dp2[r][i][i+siz][0] += ((dp2[r-1][i+1][i+siz][0] + dp2[r-1][i+1][i+siz][1])%mod + dp2[r-1][i+1][i+siz][2]) % mod;
+                        dp2[r][i][i+siz][0] %= mod;
+                    } else if(a[r] > A[i]){
+                        dp2[r][i][i+siz][1] += ((dp2[r-1][i+1][i+siz][0] + dp2[r-1][i+1][i+siz][1])%mod + dp2[r-1][i+1][i+siz][2]) % mod;
+                        dp2[r][i][i+siz][1] %= mod;
+                    } else {
+                        For(k,3)
+                            dp2[r][i][i+siz][k] += dp2[r-1][i+1][i+siz][k], dp2[r][i][i+siz][k] %= mod;
+                    }
+                    if(a[r] < A[i+siz]){
+                        dp2[r][i][i+siz][0] += (dp2[r-1][i][i+siz-1][0] + dp2[r-1][i][i+siz-1][2]) % mod; dp2[r][i][i+siz][0] %= mod;
+                        dp2[r][i][i+siz][1] += dp2[r-1][i][i+siz-1][1]; dp2[r][i][i+siz][1] %= mod;
+                    } else if(a[r] > A[i+siz]){
+                        dp2[r][i][i+siz][1] += (dp2[r-1][i][i+siz-1][1] + dp2[r-1][i][i+siz-1][2]) % mod; dp2[r][i][i+siz][1] %= mod;
+                        dp2[r][i][i+siz][0] += dp2[r-1][i][i+siz-1][0]; dp2[r][i][i+siz][0] %= mod;
+                    } else {
+                        For(k,3)
+                            dp2[r][i][i+siz][k] += dp2[r-1][i][i+siz-1][k], dp2[r][i][i+siz][k] %= mod;         
+                    }  
+                    For(j,3){
+                        dp2[r][i][i+siz][j] += dp2[r-1][i][i+siz][j]; 
+                        dp2[r][i][i+siz][j] %= mod;
+                    }              
+                }
+            }
+            int ansb = (dp[r][1][B.sz-1][0]+dp[r][1][B.sz-1][2]) % mod;
+            int ansa = (dp2[r][1][A.sz-1][0]+dp2[r][1][A.sz-1][2]) % mod;
+            for(int i=0; i+1<B.sz; ++i){
+                ansb += c(r-l+1,i) * exp (2,i) % mod;
+                ansb %= mod;
+            }
+            for(int i=0; i+1<A.sz; ++i){
+                ansa += c(r-l+1,i) * exp (2,i) % mod;
+                ansa %= mod;
+            }
+            ans[l][r] = (ansb - ansa + mod) % mod;
+            ans[l][r] %= mod;
+        }
+    }
+    A.erase(begin(A)); B.erase(begin(B));
+}   
+ll fun(string A){
+    ll ans = 0, p = 1;
+    for(int i=A.sz-1; i>=0; --i){
+        ans += p * (A[i]-'0');
+        p *= 10;
+    }
+    return ans;
+}
+
+int32_t main() {
+    ios::sync_with_stdio(0); cin.tie(0); 
+    // freopen("threesum.in", "r", stdin);
+    // freopen("threesum.out", "w", stdout);
+    inv[0] = fact[0] = 1;
+    for(int i=1; i<N; ++i){
+        fact[i] = fact[i-1] * i % mod;
+        inv[i] = exp(fact[i], mod-2);
+    }
+    ll t; 
+    cin >> n >> t >> B;
+    bool sub2 = t == fun(B);
+    t--;
+    if(!t) A.pb('0');
+    else {
+        while(t){
+            A.pb((t%10) + '0');
+            t /= 10;
+        } reverse(all(A));
+    }
+    rep(i,1,n+1) cin >> a[i];
+    int q; cin >> q;
+    solve();
+    For(i,q){
+        int l,r; cin >> l >> r;
+        cout << ans[l][r] << endl;
+    }
+    return 0;
+}
+/*
+Just some notices : 
+I believe you can do it !
+You've done things that were harder ... 
+Stay calm and focused  =)
+*/
